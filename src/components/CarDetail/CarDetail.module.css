@@ -1,0 +1,229 @@
+.detailSection {
+  padding: 60px 24px;
+  background-color: var(--bg-color);
+  margin-top: 140px; /* Offset for dual header */
+  min-height: 80vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 32px;
+  transition: var(--transition);
+}
+
+.backBtn:hover {
+  color: var(--accent-red);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+}
+
+/* Gallery Section */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mainImageWrapper {
+  width: 100%;
+  padding-bottom: 75%; /* 4:3 ratio */
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background-color: #f5f5f7;
+}
+
+.mainImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnails {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+.thumbWrapper {
+  width: 100%;
+  padding-bottom: 75%;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  background-color: #f5f5f7;
+  transition: var(--transition);
+}
+
+.thumbWrapper.active {
+  border-color: var(--accent-red);
+}
+
+.thumbImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Specifications / Details Panel */
+.detailsPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.carName {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.categoryTag {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  background-color: #0b3d32;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.price {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--accent-red);
+  font-family: var(--font-title);
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+}
+
+/* Technical Data Grid */
+.specsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.specLabel {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.specValue {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Equipment Description */
+.equipmentSection {
+  margin-bottom: 36px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.equipmentText {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Action Button */
+.whatsappBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #25d366; /* Official WhatsApp Green */
+  color: #ffffff;
+  padding: 18px 32px;
+  border-radius: 6px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transition);
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+}
+
+.whatsappBtn:hover {
+  background-color: #128c7e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 211, 102, 0.3);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .carName {
+    font-size: 1.85rem;
+  }
+  
+  .price {
+    font-size: 1.75rem;
+  }
+  
+  .specsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .detailSection {
+    margin-top: 180px; /* Offset for mobile dual header */
+  }
+}

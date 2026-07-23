@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import styles from './Inventory.module.css';
-import carsData from '../../assets/products.json';
+import carsDetailed from '../../assets/cars_detailed.json';
 
-// Eager load all webp images in assets/images/
-const imageModules = import.meta.glob('../../assets/images/*.webp', { eager: true });
+// Eager load all webp images recursively under assets/images/cars/
+const carImageModules = import.meta.glob('../../assets/images/cars/**/*.webp', { eager: true });
 
-export default function Inventory() {
+export default function Inventory({ onSelectCar }) {
   const [selectedCategories, setSelectedCategories] = useState(['CAMIONETAS', 'AUTOS']);
   const [sortBy, setSortBy] = useState('relevancia');
 
-  const getImageUrl = (imageName) => {
-    const path = `../../assets/images/${imageName}`;
-    return imageModules[path] ? imageModules[path].default : '';
+  const getCarImageUrl = (imagePath) => {
+    const path = `../../assets/images/cars/${imagePath}`;
+    return carImageModules[path] ? carImageModules[path].default : '';
   };
 
   const handleCategoryChange = (category) => {
     if (selectedCategories.includes(category)) {
-      // Don't deselect all
       if (selectedCategories.length > 1) {
         setSelectedCategories(selectedCategories.filter(c => c !== category));
       }
@@ -29,14 +28,14 @@ export default function Inventory() {
     setSortBy(e.target.value);
   };
 
-  // Convert price string to number for sorting (e.g. "$429,900.00" -> 429900)
   const parsePrice = (priceStr) => {
     return parseFloat(priceStr.replace(/[^0-9.-]+/g, ""));
   };
 
-  // Filter cars
-  const filteredCars = carsData.filter(car => {
-    return selectedCategories.includes(car.category);
+  // Filter cars (exclude generic entries like "Grupo Autovía")
+  const filteredCars = carsDetailed.filter(car => {
+    const isRealCar = !car.slug.includes('grupo-autovia');
+    return isRealCar && selectedCategories.includes(car.category);
   });
 
   // Sort cars
@@ -47,7 +46,6 @@ export default function Inventory() {
     if (sortBy === 'alto-bajo') {
       return parsePrice(b.price) - parsePrice(a.price);
     }
-    // Default or relevance: keep JSON order
     return 0;
   });
 
@@ -102,10 +100,15 @@ export default function Inventory() {
             <div className={styles.grid}>
               {sortedCars.length > 0 ? (
                 sortedCars.map((car, index) => (
-                  <div key={index} className={styles.card}>
+                  <div 
+                    key={index} 
+                    className={styles.card} 
+                    onClick={() => onSelectCar(car.slug)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className={styles.imgWrapper}>
                       <img 
-                        src={getImageUrl(car.image) || `https://via.placeholder.com/400x300?text=${encodeURIComponent(car.name)}`} 
+                        src={getCarImageUrl(car.images[0]) || `https://via.placeholder.com/400x300?text=${encodeURIComponent(car.name)}`} 
                         alt={car.name} 
                         className={styles.cardImg} 
                       />
