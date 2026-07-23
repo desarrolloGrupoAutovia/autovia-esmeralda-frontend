@@ -8,7 +8,7 @@
   color: #ffffff;
   text-align: center;
   background-color: var(--text-dark);
-  margin-top: 80px; /* Offset for the fixed header */
+  margin-top: 125px; /* Offset for the dual fixed header */
   overflow: hidden;
 }
 

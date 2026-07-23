@@ -1,0 +1,275 @@
+[
+  {
+    "slug": "mazda-cx-30-grand-touring-2023",
+    "name": "MAZDA CX-30 GRAND TOURING 2023",
+    "price": "$429,900.00",
+    "image": "e2d9ba_7b84707707a94c218814f361060c5a77_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "mercedes-benz-c200-cgi-sport-2013",
+    "name": "MERCEDES BENZ C200 CGI SPORT 2013",
+    "price": "$199,900.00",
+    "image": "e2d9ba_e6066cf2fd894693b0ae511121accae1_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "fiat-500-lounge-2013",
+    "name": "FIAT 500 LOUNGE 2013",
+    "price": "$189,900.00",
+    "image": "e2d9ba_43714b93aedd42bb81535f62d7b4330a_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "mercedes-benz-c180-cgi-2015",
+    "name": "MERCEDES BENZ C180 CGI 2015",
+    "price": "$269,900.00",
+    "image": "e2d9ba_4b78526c1a4b4c87b8b89892390e39c8_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "toyota-rav4-sport-2012",
+    "name": "TOYOTA RAV4 SPORT 2012",
+    "price": "$199,900.00",
+    "image": "e2d9ba_1033e5b655994a72a1f1b2f069472246_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "infiniti-qx80-perfection-2017",
+    "name": "INFINITI QX80 PERFECTION 2017",
+    "price": "$399,900.00",
+    "image": "e2d9ba_457a41c9405b42729faf62a9e29ff5a7_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "ford-territory-titanium-2023",
+    "name": "FORD TERRITORY TITANIUM 2023",
+    "price": "$399,900.00",
+    "image": "e2d9ba_e763dd43073a4d82a5fa3f51f3df469e_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "chevrolet-suburban-lt-2013-1",
+    "name": "CHEVROLET SUBURBAN LT 2013",
+    "price": "$299,900.00",
+    "image": "e2d9ba_a6460a386e294796a09029d1f7edbf6a_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "mercedes-benz-c200-cgi-exclusive-2014",
+    "name": "MERCEDES BENZ C200 CGI EXCLUSIVE 2014",
+    "price": "$229,900.00",
+    "image": "e2d9ba_97d8fc68f6014aa4ad2432151b38dc8c_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "kia-sportage-ex-2016",
+    "name": "KIA SPORTAGE EX 2016",
+    "price": "$229,900.00",
+    "image": "e2d9ba_aed621535e4849c386eeab495f9e811f_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "volkswagen-tiguan-r-line-2016",
+    "name": "VOLKSWAGEN TIGUAN R-LINE 2016",
+    "price": "$279,900.00",
+    "image": "e2d9ba_1823f6d2564d47ce868fe07314070d6b_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "ford-f-150-xl-crew-4x4-2022",
+    "name": "FORD F-150 XL CREW 4X4 2022",
+    "price": "$599,900.00",
+    "image": "e2d9ba_014019868cc94acd9fc8ab06b149c45e_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "mini-cooper-salt-2015",
+    "name": "MINI COOPER SALT 2015",
+    "price": "$219,900.00",
+    "image": "e2d9ba_ec7f5f40c5034c5b9cf77cea4dd89538_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "audi-a1-cool-2016",
+    "name": "AUDI A1 COOL 2016",
+    "price": "$234,900.00",
+    "image": "e2d9ba_86bdaa6575e945aea6b0c7a99989e282_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "audi-a4-dynamic-2017",
+    "name": "AUDI A4 DYNAMIC 2017",
+    "price": "$279,900.00",
+    "image": "e2d9ba_6a8af3e0747848e0aebecbe4d5c1fc8d_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "audi-q5-elite-2018",
+    "name": "AUDI Q5 ELITE 2018",
+    "price": "$349,900.00",
+    "image": "e2d9ba_9acf830c3b374a24843cbaae61c6d639_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "chevrolet-suburban-lt-2013",
+    "name": "CHEVROLET SUBURBAN LT 2013",
+    "price": "$299,900.00",
+    "image": "e2d9ba_387c4f136f5742c4bf1bd3bcacd90582_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "audi-s6-2018",
+    "name": "AUDI S6 2018",
+    "price": "$599,900.00",
+    "image": "e2d9ba_ca461821b967437880fd9d07d05ce1ba_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "toyota-rav4-xle-awd-2016",
+    "name": "TOYOTA RAV4 XLE AWD 2016",
+    "price": "$339,900.00",
+    "image": "e2d9ba_d356c50f24a749f28fd86327adc59294_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "land-rover-range-rover-evoque-se-2019",
+    "name": "LAND ROVER RANGE ROVER EVOQUE SE 2019",
+    "price": "$529,900.00",
+    "image": "e2d9ba_3cf985af33994fcaac571e6b68f83eb4_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "chevrolet-s10-max-lt-crew-4x4-2023",
+    "name": "CHEVROLET S10 MAX LT CREW 4X4 2023",
+    "price": "$469,900.00",
+    "image": "e2d9ba_d8da857f267b409ebef7fac09bc793e9_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "kia-sportage-gt-line-2021",
+    "name": "KIA SPORTAGE GT LINE 2021",
+    "price": "$349,900.00",
+    "image": "e2d9ba_e9a271b2148744d2a32d6ef70971b1fe_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "audi-a3-sedán-dynamic-2020",
+    "name": "AUDI A3 SEDÁN DYNAMIC 2020",
+    "price": "$329,900.00",
+    "image": "e2d9ba_2fce1e22ce334d058417657757983cbe_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "volkswagen-passat-sport-2013",
+    "name": "VOLKSWAGEN PASSAT SPORT 2013",
+    "price": "$199,900.00",
+    "image": "e2d9ba_4c017cc03b3e4d1a9b1591d3f4ef1857_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "toyota-sequoia-limited-2013",
+    "name": "TOYOTA SEQUOIA LIMITED 2013",
+    "price": "$349,900.00",
+    "image": "e2d9ba_c739cd0913274ed9a7363ccd3ee5cf13_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "renault-stepway-intens-2024",
+    "name": "RENAULT STEPWAY INTENS 2024",
+    "price": "$269,900.00",
+    "image": "e2d9ba_0df7cff3b8f4436cbe87c0be5640005a_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "toyota-highlander-limited-blindada-nivel-3-plus-2015",
+    "name": "TOYOTA HIGHLANDER LIMITED BLINDADA NIVEL 3 PLUS 2015",
+    "price": "$499,900.00",
+    "image": "e2d9ba_ebbf8e6fb68847a584c310e7f021aee5_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "peugeot-307cc-roland-garros-2009",
+    "name": "PEUGEOT 307CC ROLAND GARROS 2009",
+    "price": "$179,900.00",
+    "image": "e2d9ba_73d8a6c6b10f40e6a6311f64203942c3_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "mercedes-benz-sprinter-van-311-cdi-2022",
+    "name": "MERCEDES BENZ SPRINTER VAN 311 CDI 2022",
+    "price": "$625,900.00",
+    "image": "e2d9ba_288517d2c2104e36824aae4ac37432d2_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "nissan-frontier-se-2021",
+    "name": "NISSAN FRONTIER SE 2021",
+    "price": "$329,900.00",
+    "image": "e2d9ba_d2af88920550464997897aa0ac6be49f_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "audi-a6-elite-quattro-2017",
+    "name": "AUDI A6 ELITE QUATTRO 2017",
+    "price": "$399,900.00",
+    "image": "e2d9ba_1e02381c5c19494ba158d01ce3310865_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "bmw-i8-coupé-hev-2020",
+    "name": "BMW I8 COUPÉ HEV 2020",
+    "price": "$1,799,900.00",
+    "image": "e2d9ba_75dbad42e2ea4e9fa1fb72257e90ac9d_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "chevrolet-traverse-lt-2017",
+    "name": "CHEVROLET TRAVERSE LT 2017",
+    "price": "$279,900.00",
+    "image": "e2d9ba_2a34614e2f194501aa11fb64db2239e7_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "audi-a1-urban-front-2018",
+    "name": "AUDI A1 URBAN FRONT 2018",
+    "price": "$279,900.00",
+    "image": "e2d9ba_b6bc76358dcf41dabc70c5c9edf71cef_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "bmw-x1-xdrive-20i-m-sport-2020",
+    "name": "BMW X1 XDRIVE 20I M SPORT 2020",
+    "price": "$399,900.00",
+    "image": "e2d9ba_a6d9cf6499854613af30d53d495e254c_mv2.webp",
+    "category": "CAMIONETAS"
+  },
+  {
+    "slug": "chevrolet-traverse-lt-2016",
+    "name": "CHEVROLET TRAVERSE LT 2016",
+    "price": "$249,900.00",
+    "image": "e2d9ba_60704715a6824d04925c03544331dc05_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "audi-a1-ego-2016",
+    "name": "AUDI A1 EGO 2016",
+    "price": "$249,900.00",
+    "image": "e2d9ba_da915165a84a440aaa2d0a2b2a7eac91_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "mercedes-benz-clase-s-sl500-2005",
+    "name": "MERCEDES BENZ CLASE S SL500 2005",
+    "price": "$799,900.00",
+    "image": "e2d9ba_0bc2c94985a64fa4a8431095b4f5c417_mv2.webp",
+    "category": "AUTOS"
+  },
+  {
+    "slug": "volkswagen-touareg-sport-2014",
+    "name": "VOLKSWAGEN TOUAREG V6 2014",
+    "price": "$299,900.00",
+    "image": "e2d9ba_a5d0f3dd3d2d483a9e6d72ed8817e817_mv2.webp",
+    "category": "AUTOS"
+  }
+]

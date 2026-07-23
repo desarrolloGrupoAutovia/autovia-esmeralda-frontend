@@ -1,0 +1,210 @@
+.inventorySection {
+  padding: 60px 24px;
+  background-color: var(--bg-color);
+  margin-top: 140px; /* Offset for the dual header */
+  min-height: 80vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.headerInfo {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+  font-family: var(--font-title);
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+}
+
+/* Sidebar Filters */
+.sidebar {
+  background-color: var(--bg-card);
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  align-self: start;
+}
+
+.filterTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.filterGroup {
+  margin-bottom: 24px;
+}
+
+.groupLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.checkboxLabel input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-red);
+}
+
+/* Main Catalog Area */
+.catalogHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.sortSelect {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  outline: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+/* Vehicle Card */
+.card {
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(29, 14, 3, 0.02);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(29, 14, 3, 0.05);
+  border-color: var(--accent-red);
+}
+
+.imgWrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 75%; /* 4:3 Aspect Ratio */
+  background-color: #f5f5f7;
+  overflow: hidden;
+}
+
+.cardImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.card:hover .cardImg {
+  transform: scale(1.04);
+}
+
+.cardContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.carName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  min-height: 48px; /* Ensure vertical alignment */
+  line-height: 1.4;
+}
+
+.carPrice {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-red);
+  margin-top: auto;
+  font-family: var(--font-title);
+}
+
+.categoryTag {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  background-color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.noResults {
+  text-align: center;
+  padding: 80px 24px;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .inventorySection {
+    margin-top: 180px; /* Offset for mobile view */
+  }
+}
