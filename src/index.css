@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Questrial&display=swap');
+
+:root {
+  /* Colors from original Wix theme */
+  --bg-color: #FFF6EF;       /* Warm cream background */
+  --text-dark: #1D0E03;      /* Deep dark brown/black */
+  --accent-red: #C91C1C;     /* Red accent color */
+  --accent-orange: #C74300;  /* Warm secondary accent */
+  --text-muted: #5F6360;     /* Muted grey */
+  --border-color: #E2E2E2;   /* Light divider grey */
+  --bg-card: #FFFFFF;        /* Pure white for containers */
+
+  /* Fonts */
+  --font-title: 'Montserrat', sans-serif;
+  --font-body: 'Questrial', sans-serif;
+
+  /* Transitions */
+  --transition: all 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+html {
+  scroll-behavior: smooth;
+}

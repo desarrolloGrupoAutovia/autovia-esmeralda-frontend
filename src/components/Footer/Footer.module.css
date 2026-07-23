@@ -1,0 +1,78 @@
+.footer {
+  background-color: var(--text-dark);
+  color: #ffffff;
+  padding: 60px 24px 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.socialSection {
+  text-align: center;
+}
+
+.socialTitle {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--bg-color);
+  font-weight: 500;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: rgba(255, 246, 239, 0.1);
+  color: #ffffff;
+  font-size: 1.25rem;
+  transition: var(--transition);
+}
+
+.socialIcon:hover {
+  background-color: var(--accent-red);
+  transform: translateY(-3px);
+}
+
+.bottomBar {
+  width: 100%;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.privacyLink {
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.privacyLink:hover {
+  color: var(--bg-color);
+}
+
+@media (max-width: 768px) {
+  .bottomBar {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
