@@ -30,75 +30,219 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1.3fr 1fr;
   gap: 48px;
 }
 
-/* Gallery Section */
+/* ==========================================================================
+   DYNAMIC HEIGHT GALLERY (Horizontally listed thumbnails below)
+   ========================================================================== */
 .gallery {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  align-self: start;
+  width: 100%;
 }
 
 .mainImageWrapper {
   width: 100%;
-  padding-bottom: 75%; /* 4:3 ratio */
   position: relative;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--border-color);
-  background-color: #f5f5f7;
+  background-color: #ffffff; /* Clean white canvas */
+  cursor: zoom-in;
+  transition: var(--transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mainImageWrapper:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .mainImage {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: 520px; /* Cap height to keep it proportional on screen */
+  object-fit: contain;
+}
+
+.zoomHint {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background-color: rgba(29, 26, 24, 0.6);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+  z-index: 3;
 }
 
 .thumbnails {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 12px;
+  width: 100%;
 }
 
 .thumbWrapper {
-  width: 100%;
-  padding-bottom: 75%;
-  position: relative;
+  aspect-ratio: 4 / 3;
   border-radius: 4px;
   overflow: hidden;
-  border: 2px solid transparent;
+  border: 1px solid #dcdad8;
+  background-color: #f7f7f8;
   cursor: pointer;
-  background-color: #f5f5f7;
-  transition: var(--transition);
+  transition: all 0.15s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+.thumbWrapper:hover,
 .thumbWrapper.active {
-  border-color: var(--accent-red);
+  border-color: #3483fa; /* Blue indicator matching MercadoLibre style */
+  border-width: 2px;
 }
 
 .thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Crop thumbnails to maintain grid alignment uniformity */
+}
+
+/* ==========================================================================
+   FULL-SCREEN LIGHTBOX MODAL (MercadoLibre-style zoom view)
+   ========================================================================== */
+.lightboxOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.lightboxHeader {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  color: #ffffff;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+  z-index: 3200;
 }
 
-/* Specifications / Details Panel */
+.lightboxCounter {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font-title);
+  color: #e0dedc;
+}
+
+.lightboxCloseBtn {
+  background: none;
+  border: none;
+  color: #e0dedc;
+  font-size: 2.5rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.lightboxCloseBtn:hover {
+  color: #ffffff;
+}
+
+/* Lightbox Navigation Arrows */
+.lightboxArrowLeft,
+.lightboxArrowRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  color: #ffffff;
+  font-size: 3rem;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.15s, transform 0.1s;
+  z-index: 3100;
+  outline: none;
+  user-select: none;
+}
+
+.lightboxArrowLeft:hover,
+.lightboxArrowRight:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.lightboxArrowLeft:active {
+  transform: translateY(-50%) scale(0.9);
+}
+.lightboxArrowRight:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.lightboxArrowLeft {
+  left: 30px;
+}
+
+.lightboxArrowRight {
+  right: 30px;
+}
+
+.lightboxImageContainer {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3050;
+}
+
+.lightboxImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  animation: lightboxFade 0.2s ease-out;
+}
+
+@keyframes lightboxFade {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   SPECIFICATIONS / DETAILS PANEL
+   ========================================================================== */
 .detailsPanel {
   display: flex;
   flex-direction: column;
 }
 
 .carName {
-  font-size: 2.5rem;
+  font-size: 2.1rem;
   font-weight: 700;
   color: var(--text-dark);
   margin-bottom: 12px;
@@ -114,68 +258,69 @@
   background-color: #0b3d32;
   padding: 4px 12px;
   border-radius: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .price {
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--accent-red);
   font-family: var(--font-title);
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 20px;
+  padding-bottom: 16px;
 }
 
 /* Technical Data Grid */
 .specsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px 24px;
-  margin-bottom: 36px;
+  gap: 16px 20px;
+  margin-bottom: 28px;
 }
 
 .specItem {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px 16px;
+  gap: 2px;
+  padding: 10px 14px;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 6px;
 }
 
 .specLabel {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .specValue {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-dark);
 }
 
 /* Equipment Description */
 .equipmentSection {
-  margin-bottom: 36px;
+  margin-bottom: 28px;
   border-top: 1px solid var(--border-color);
-  padding-top: 24px;
+  padding-top: 20px;
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .equipmentText {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.6;
   color: var(--text-muted);
+  white-space: pre-wrap; /* Preserve scraped text structure */
 }
 
 /* Action Button */
@@ -183,12 +328,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background-color: #25d366; /* Official WhatsApp Green */
+  gap: 10px;
+  background-color: #25d366;
   color: #ffffff;
-  padding: 18px 32px;
+  padding: 16px 28px;
   border-radius: 6px;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   text-decoration: none;
   transition: var(--transition);
@@ -199,7 +344,499 @@
 .whatsappBtn:hover {
   background-color: #128c7e;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(37, 211, 102, 0.3);
+}
+
+/* ==========================================================================
+   CREDIT CALCULATOR WIDGET STYLES (Matching Mockup exactly)
+   ========================================================================== */
+.calculatorCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e1e1e1;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-title);
+  width: 100%;
+}
+
+.calcHeader {
+  background-color: #211e1b; /* Charcoal/Dark Brown */
+  padding: 24px;
+  color: #ffffff;
+}
+
+.calcHeaderLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #cda851; /* Gold accent */
+  text-transform: uppercase;
+}
+
+.calcHeaderName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 8px 0 12px 0;
+  color: #ffffff;
+}
+
+.calcHeaderPrice {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.calcHeaderPriceSub {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #a09d9b;
+  margin-left: 8px;
+}
+
+.calcBody {
+  padding: 24px;
+}
+
+.calcRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calcLabel {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #211e1b;
+}
+
+.calcValueHighlight {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #cda851; /* Gold text matching mockup */
+}
+
+.sliderContainer {
+  margin: 8px 0 24px 0;
+}
+
+/* Custom range slider styling */
+.rangeSlider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5dfd8;
+  outline: none;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #cda851; /* Gold ring thumb */
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.rangeSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.plazoButtons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 12px 0 28px 0;
+}
+
+.plazoBtn {
+  background-color: #ffffff;
+  border: 1px solid #dcdad8;
+  border-radius: 8px;
+  color: #211e1b;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.plazoBtn:hover {
+  border-color: #211e1b;
+}
+
+.plazoBtnActive {
+  background-color: #211e1b;
+  border-color: #211e1b;
+  color: #ffffff;
+}
+
+.paymentBox {
+  background-color: #f9f2e3; /* Light gold background */
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.paymentLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #8c7336;
+}
+
+.paymentValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #705822; /* Dark gold payment text */
+  margin-top: 6px;
+}
+
+.paymentValueSub {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #8c7336;
+  margin-left: 4px;
+}
+
+.preApprovalBtn {
+  width: 100%;
+  background-color: #211e1b;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-bottom: 16px;
+}
+
+.preApprovalBtn:hover {
+  background-color: #3b3631;
+  transform: translateY(-1px);
+}
+
+.disclaimerText {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #858280;
+  text-align: justify;
+}
+
+/* ==========================================================================
+   3-STEP PRE-APPROVAL FORM MODAL (Matching User Screenshots)
+   ========================================================================== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(29, 26, 24, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: modalEnter 0.25s ease-out;
+}
+
+@keyframes modalEnter {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modalHeader {
+  background-color: #211e1b;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.modalHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.modalHeaderLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #cda851;
+  text-transform: uppercase;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #a09d9b;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.closeBtn:hover {
+  color: #ffffff;
+}
+
+.modalTitle {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #ffffff;
+}
+
+.modalSubtitle {
+  font-size: 0.9rem;
+  color: #a09d9b;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+}
+
+.modalSubtitleBold {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.modalSubtitleGold {
+  color: #cda851;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* Progress bar under header */
+.progressBar {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.progressSegment {
+  height: 6px;
+  flex: 1;
+  background-color: #3b3631;
+  border-radius: 3px;
+  transition: background-color 0.3s;
+}
+
+.progressSegmentActive {
+  background-color: #cda851;
+}
+
+.modalBody {
+  padding: 24px;
+}
+
+.stepContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stepTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #cda851; /* Gold text */
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formField label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #211e1b;
+}
+
+.formField input[type="text"],
+.formField input[type="date"],
+.formField input[type="number"],
+.formField input[type="tel"],
+.formField input[type="email"] {
+  padding: 12px 16px;
+  border: 1px solid #dcdad8;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  color: #211e1b;
+}
+
+.formField input:focus {
+  border-color: #211e1b;
+}
+
+.formSelect {
+  padding: 12px 16px;
+  border: 1px solid #dcdad8;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #ffffff;
+  font-family: inherit;
+  color: #211e1b;
+}
+
+.formSelect:focus {
+  border-color: #211e1b;
+}
+
+.toggleRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.toggleBtn {
+  background-color: #ffffff;
+  border: 1px solid #dcdad8;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #211e1b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.toggleBtn:hover {
+  border-color: #211e1b;
+}
+
+.toggleBtnActive {
+  background-color: #211e1b;
+  border-color: #211e1b;
+  color: #ffffff;
+}
+
+/* Modal Footer Buttons */
+.modalFooterSingle {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.modalFooterSplit {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.modalSubmitBtn {
+  background-color: #211e1b;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  width: 100%;
+}
+
+.modalSubmitBtn:hover:not(:disabled) {
+  background-color: #3b3631;
+}
+
+.modalSubmitBtn:disabled {
+  background-color: #c5c3c1;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
+.modalBackBtn {
+  background-color: #ffffff;
+  border: 1px solid #dcdad8;
+  border-radius: 8px;
+  color: #211e1b;
+  padding: 14px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  width: 100%;
+  text-align: center;
+}
+
+.modalBackBtn:hover {
+  border-color: #211e1b;
+}
+
+/* Informative elements in step 3 */
+.infoBanner {
+  background-color: #f9f2e3;
+  color: #8c7336;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.checkboxField {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #858280;
+  margin-top: 8px;
+}
+
+.checkboxField input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: #211e1b;
+  cursor: pointer;
+}
+
+.checkboxField label {
+  cursor: pointer;
+}
+
+.checkboxField a {
+  color: #8c7336;
+  text-decoration: underline;
 }
 
 @media (max-width: 900px) {
@@ -220,10 +857,26 @@
   
   .specsGrid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 
   .detailSection {
     margin-top: 180px; /* Offset for mobile dual header */
   }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Lightbox Mobile Adjustments */
+  .lightboxArrowLeft,
+  .lightboxArrowRight {
+    font-size: 2.5rem;
+    padding: 0;
+    width: 44px;
+    height: 44px;
+  }
+  .lightboxArrowLeft { left: 10px; }
+  .lightboxArrowRight { right: 10px; }
 }

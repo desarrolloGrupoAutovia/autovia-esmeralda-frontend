@@ -108,7 +108,7 @@ export default function Inventory({ onSelectCar }) {
                   >
                     <div className={styles.imgWrapper}>
                       <img 
-                        src={getCarImageUrl(car.images[0]) || `https://via.placeholder.com/400x300?text=${encodeURIComponent(car.name)}`} 
+                        src={getCarImageUrl(car.images.length > 3 ? car.images[3] : car.images[0]) || `https://via.placeholder.com/400x300?text=${encodeURIComponent(car.name)}`} 
                         alt={car.name} 
                         className={styles.cardImg} 
                       />
