@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { DASHBOARD_URL } from './dashboardUrl';
 
 /* autovia-dashboard es otro proyecto de Vercel; /api/catalogo ya está
    pensado para consumirse desde acá (CORS abierto, sin sesión) — ver el
    comentario de esa función en ese repo para el contrato completo. */
-const CATALOGO_URL = 'https://autovia-dashboard.vercel.app/api/catalogo';
+const CATALOGO_URL = `${DASHBOARD_URL}/api/catalogo`;
 
 /* Carga el catálogo una sola vez por sesión de la página: los tres lugares
    que lo necesitan (Home destacados, Inventario, ficha de detalle) piden

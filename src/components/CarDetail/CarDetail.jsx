@@ -6,8 +6,10 @@ import { getCarImageUrl, parsePrice, parseAnio, parseKm } from '../../lib/cars';
 import { mxn, ENGANCHE_MINIMO_PCT } from '../../lib/credito';
 import { useCotizador } from '../../lib/useCotizador';
 import { useCatalogo } from '../../lib/catalogo';
+import { enviarOtp, verificarOtp } from '../../lib/otp';
 
 const PLAZOS = [12, 24, 36, 48];
+const REENVIO_COOLDOWN_S = 32;
 
 const PUNTOS_REVISION = [
   { name: 'Motor', status: 'OK' },
@@ -33,7 +35,9 @@ export default function CarDetail() {
   const [car, setCar] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formStep, setFormStep] = useState(1);
+  // 'celular' y 'codigo' verifican el WhatsApp antes de dejar avanzar al
+  // resto del formulario (1, 2, 3) — mismo patrón que Movinex.
+  const [formPaso, setFormPaso] = useState('celular');
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -43,6 +47,18 @@ export default function CarDetail() {
     municipio: '', estado: '', tipoVivienda: '', anosDomicilio: '0',
     celular: '', telefonoFijo: '', correo: '', autorizacion: false,
   });
+
+  // ---------- verificación por WhatsApp (paso "celular" → "codigo") ----------
+  const [otpCodigo, setOtpCodigo] = useState('');
+  const [otpEnviando, setOtpEnviando] = useState(false);
+  const [otpError, setOtpError] = useState('');
+  const [otpReenvioCountdown, setOtpReenvioCountdown] = useState(0);
+
+  useEffect(() => {
+    if (otpReenvioCountdown <= 0) return;
+    const t = setTimeout(() => setOtpReenvioCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [otpReenvioCountdown]);
 
   const parsedPrice = car ? parsePrice(car.price) : 0;
   const { setPrice, down, setDown, plazo, setPlazo, q } = useCotizador({
@@ -62,6 +78,44 @@ export default function CarDetail() {
     if (car) setPrice(parsePrice(car.price));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [car]);
+
+  const handleEnviarOtp = async () => {
+    if (formData.celular.length < 10) return;
+    setOtpEnviando(true);
+    setOtpError('');
+    try {
+      await enviarOtp(formData.celular);
+      setOtpCodigo('');
+      setOtpReenvioCountdown(REENVIO_COOLDOWN_S);
+    } catch (e) {
+      setOtpError(e.message || 'Ocurrió un error al enviar el código.');
+    } finally {
+      setOtpEnviando(false);
+    }
+  };
+
+  const handleVerificarOtp = async (codigo) => {
+    setOtpEnviando(true);
+    setOtpError('');
+    try {
+      const verificado = await verificarOtp(formData.celular, codigo);
+      if (!verificado) throw new Error('Código incorrecto o expirado.');
+      setFormPaso(1);
+    } catch (e) {
+      setOtpError(e.message || 'Código inválido');
+      setOtpReenvioCountdown(0);
+    } finally {
+      setOtpEnviando(false);
+    }
+  };
+
+  // El código se verifica solo apenas se completan los 6 dígitos.
+  useEffect(() => {
+    if (formPaso === 'codigo' && otpCodigo.length === 6 && !otpEnviando) {
+      handleVerificarOtp(otpCodigo);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otpCodigo]);
 
   if (!car) {
     return (
@@ -85,8 +139,8 @@ export default function CarDetail() {
   const garantia = garantiaDe(anio);
 
   const handleInputChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
-  const handleNextStep = () => setFormStep((prev) => Math.min(prev + 1, 3));
-  const handlePrevStep = () => setFormStep((prev) => Math.max(prev - 1, 1));
+  const handleNextStep = () => setFormPaso((prev) => Math.min(prev + 1, 3));
+  const handlePrevStep = () => setFormPaso((prev) => (prev === 1 ? 'codigo' : Math.max(prev - 1, 1)));
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
@@ -115,7 +169,7 @@ export default function CarDetail() {
 
     window.open(`https://wa.me/525554340686?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
     setIsModalOpen(false);
-    setFormStep(1);
+    setFormPaso('celular');
   };
 
   const defaultWhatsappUrl = `https://wa.me/525554340686?text=${encodeURIComponent(
@@ -315,7 +369,7 @@ export default function CarDetail() {
 
               <button
                 type="button"
-                onClick={() => { setIsModalOpen(true); setFormStep(1); }}
+                onClick={() => { setIsModalOpen(true); setFormPaso('celular'); setOtpError(''); setOtpCodigo(''); }}
                 className={styles.ctaSolid}
               >
                 Solicita tu crédito
@@ -376,15 +430,76 @@ export default function CarDetail() {
               </p>
 
               <div className={styles.progressBar}>
-                <div className={`${styles.progressSegment} ${formStep >= 1 ? styles.progressSegmentActive : ''}`}></div>
-                <div className={`${styles.progressSegment} ${formStep >= 2 ? styles.progressSegmentActive : ''}`}></div>
-                <div className={`${styles.progressSegment} ${formStep >= 3 ? styles.progressSegmentActive : ''}`}></div>
+                <div className={`${styles.progressSegment} ${styles.progressSegmentActive}`}></div>
+                <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 1 ? styles.progressSegmentActive : ''}`}></div>
+                <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 2 ? styles.progressSegmentActive : ''}`}></div>
+                <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 3 ? styles.progressSegmentActive : ''}`}></div>
               </div>
             </div>
 
             <div className={styles.modalBody}>
-              <form onSubmit={formStep === 3 ? handleSubmitForm : (e) => e.preventDefault()}>
-                {formStep === 1 && (
+              {formPaso === 'celular' && (
+                <div className={styles.stepContainer}>
+                  <h3 className={styles.stepTitle}>Verifica tu número de celular</h3>
+                  <div className={styles.formField}>
+                    <label>Número de celular (WhatsApp) *</label>
+                    <input
+                      type="tel"
+                      placeholder="10 dígitos"
+                      maxLength={10}
+                      value={formData.celular}
+                      onChange={(e) => handleInputChange('celular', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    />
+                    <div className={styles.infoBanner}>Con este número te contactaremos por WhatsApp para dar seguimiento a tu solicitud.</div>
+                  </div>
+                  {otpError && <div className={styles.errorMsg}>{otpError}</div>}
+                  <div className={styles.modalFooterSingle}>
+                    <button
+                      type="button"
+                      className={styles.modalSubmitBtn}
+                      disabled={formData.celular.length < 10 || otpEnviando}
+                      onClick={async () => { await handleEnviarOtp(); setFormPaso('codigo'); }}
+                    >
+                      {otpEnviando ? 'Enviando...' : 'Enviar código'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {formPaso === 'codigo' && (
+                <div className={styles.stepContainer}>
+                  <h3 className={styles.stepTitle}>Verifica tu número de celular</h3>
+                  <div className={styles.infoBanner}>Te enviamos un código por WhatsApp al {formData.celular}.</div>
+                  <div className={styles.formField}>
+                    <label>Ingresa el código de 6 dígitos</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="• • • • • •"
+                      maxLength={6}
+                      value={otpCodigo}
+                      onChange={(e) => { setOtpCodigo(e.target.value.replace(/\D/g, '')); setOtpError(''); }}
+                    />
+                  </div>
+                  {otpError && <div className={styles.errorMsg}>{otpError}</div>}
+                  <div className={styles.modalFooterSplit}>
+                    <button type="button" className={styles.modalBackBtn} onClick={() => setFormPaso('celular')}>
+                      Atrás
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.modalSubmitBtn}
+                      onClick={handleEnviarOtp}
+                      disabled={otpEnviando || (otpReenvioCountdown > 0 && !otpError)}
+                    >
+                      {otpEnviando ? 'Enviando...' : otpReenvioCountdown > 0 && !otpError ? `Reenviar código (${otpReenvioCountdown})` : 'Reenviar código'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={formPaso === 3 ? handleSubmitForm : (e) => e.preventDefault()}>
+                {formPaso === 1 && (
                   <div className={styles.stepContainer}>
                     <h3 className={styles.stepTitle}>Paso 1 de 3 - Datos personales</h3>
 
@@ -467,7 +582,7 @@ export default function CarDetail() {
                   </div>
                 )}
 
-                {formStep === 2 && (
+                {formPaso === 2 && (
                   <div className={styles.stepContainer}>
                     <h3 className={styles.stepTitle}>Paso 2 de 3 - Domicilio</h3>
 
@@ -537,16 +652,11 @@ export default function CarDetail() {
                   </div>
                 )}
 
-                {formStep === 3 && (
+                {formPaso === 3 && (
                   <div className={styles.stepContainer}>
                     <h3 className={styles.stepTitle}>Paso 3 de 3 - Contacto</h3>
 
-                    <div className={styles.formField}>
-                      <label>Número de celular (WhatsApp) *</label>
-                      <input type="tel" required placeholder="10 dígitos" value={formData.celular} onChange={(e) => handleInputChange('celular', e.target.value)} />
-                    </div>
-
-                    <div className={styles.infoBanner}>Te contactaremos por WhatsApp a este número para continuar tu trámite.</div>
+                    <div className={styles.infoBanner}>Te contactaremos por WhatsApp al {formData.celular} para continuar tu trámite.</div>
 
                     <div className={styles.formField}>
                       <label>Teléfono fijo</label>
