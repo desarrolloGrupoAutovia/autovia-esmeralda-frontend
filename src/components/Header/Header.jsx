@@ -1,43 +1,109 @@
 import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
+
+const NAV_ITEMS = [
+  { label: 'Inventario', to: '/inventario' },
+  { label: 'Autovía Credit', to: '/', anchor: 'credit' },
+  { label: 'Garantía', to: '/', anchor: 'garantia' },
+  { label: 'Nosotros', to: '/', anchor: 'nosotros' },
+  { label: 'Contacto', to: '/', anchor: 'contacto' },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const irA = (to, anchorId) => {
+    setIsOpen(false);
+
+    if (to === '/' && anchorId && location.pathname === '/') {
+      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    navigate(to);
+    if (to === '/' && anchorId) {
+      setTimeout(() => {
+        document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <header className={styles.header}>
-      <div className={styles.container}>
-        <div className={styles.brand}>
-          <span className={styles.title}>Autovía Esmeralda</span>
-          <span className={styles.subtitle}>Excelencia sobre ruedas</span>
-        </div>
+      <div className={styles.inner}>
+        <Link
+          to="/"
+          className={styles.brand}
+          onClick={(e) => { e.preventDefault(); irA('/'); }}
+        >
+          <span className={styles.logoMark}></span>
+          <span className={styles.brandName}>
+            Autovía <span className={styles.brandAccent}>Esmeralda</span>
+          </span>
+        </Link>
 
-        <button className={styles.mobileMenuBtn} onClick={toggleMenu} aria-label="Toggle menu">
-          <span style={{ transform: isOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }}></span>
-          <span style={{ opacity: isOpen ? 0 : 1 }}></span>
-          <span style={{ transform: isOpen ? 'rotate(-45deg) translate(6px, -7px)' : 'none' }}></span>
-        </button>
-
-        <nav className={`${styles.nav} ${isOpen ? styles.open : ''}`}>
-          <ul className={styles.menuList}>
-            <li className={styles.menuItem} onClick={() => setIsOpen(false)}>
-              <a href="#principal">Página principal</a>
-            </li>
-            <li className={styles.menuItem} onClick={() => setIsOpen(false)}>
-              <a href="#mision-vision">Misión & Visión</a>
-            </li>
-            <li className={styles.menuItem} onClick={() => setIsOpen(false)}>
-              <a href="#sucursal">Sucursal</a>
-            </li>
-          </ul>
-          <div className={styles.contactInfo}>
-            <span className={styles.phoneIcon}>📞</span>
-            <a href="tel:5554340686">55 5434 0686</a>
-          </div>
+        <nav className={styles.nav}>
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.label}
+              href={item.anchor ? `#${item.anchor}` : item.to}
+              className={`${styles.navLink} ${location.pathname === item.to && !item.anchor ? styles.active : ''}`}
+              onClick={(e) => { e.preventDefault(); irA(item.to, item.anchor); }}
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
+
+        <a
+          href="https://wa.me/5215554340686"
+          target="_blank"
+          rel="noreferrer"
+          className={styles.whatsappBtn}
+        >
+          <span className={styles.dot}></span>
+          WhatsApp
+        </a>
+
+        <button
+          className={styles.menuBtn}
+          onClick={() => setIsOpen((v) => !v)}
+          aria-label="Abrir menú"
+          aria-expanded={isOpen}
+        >
+          <span></span>
+          <span></span>
+        </button>
       </div>
+
+      {isOpen && (
+        <div className={styles.mobileMenu}>
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.label}
+              href={item.anchor ? `#${item.anchor}` : item.to}
+              className={styles.mobileNavLink}
+              onClick={(e) => { e.preventDefault(); irA(item.to, item.anchor); }}
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="https://wa.me/5215554340686"
+            target="_blank"
+            rel="noreferrer"
+            className={styles.mobileWhatsapp}
+          >
+            <span className={styles.dot}></span>
+            WhatsApp
+          </a>
+        </div>
+      )}
     </header>
   );
 }

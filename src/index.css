@@ -1,21 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Questrial&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Colors from original Wix theme */
-  --bg-color: #FFF6EF;       /* Warm cream background */
-  --text-dark: #1D0E03;      /* Deep dark brown/black */
-  --accent-red: #C91C1C;     /* Red accent color */
-  --accent-orange: #C74300;  /* Warm secondary accent */
-  --text-muted: #5F6360;     /* Muted grey */
-  --border-color: #E2E2E2;   /* Light divider grey */
-  --bg-card: #FFFFFF;        /* Pure white for containers */
+  /* ---------- Fondos y superficies ---------- */
+  --bg-page: #FAFBFA;
+  --bg-surface: #FFFFFF;
+  --bg-dark: #101512;
+  --bg-dark-card: #161E1B;
+  --bg-dark-input: #1B2320;
+  --bg-tint: #EEF9F4;        /* verde muy claro: badges, resaltados */
 
-  /* Fonts */
-  --font-title: 'Montserrat', sans-serif;
-  --font-body: 'Questrial', sans-serif;
+  /* ---------- Acento (verde de marca) ---------- */
+  --accent: #0B7A55;
+  --accent-hover: #095F43;   /* hover de links/texto verde */
+  --accent-solid-hover: #0A8F62; /* hover de botones CTA sólidos */
+  --accent-bright: #7DF5B8;  /* acento brillante sobre fondo oscuro */
+  --accent-border: #C9E8DB;  /* bordes/badges verdes claros */
+  --selection: #B8F2D8;
 
-  /* Transitions */
-  --transition: all 0.3s ease;
+  /* ---------- Texto ---------- */
+  --text-primary: #101512;
+  --text-secondary: #3A4440;
+  --text-body: #4B5652;
+  --text-muted: #6B7570;
+  --text-on-dark-secondary: #8FA39A;
+  --text-on-dark-body: #B4C0BA;
+
+  /* ---------- Bordes / divisores ---------- */
+  --border: #E4E8E5;
+  --border-subtle: #EDF0EE;
+  --border-neutral: #D8DEDA;
+  --border-dark: #2C3733;
+
+  /* ---------- Tipografías ---------- */
+  --font-title: 'Archivo', Helvetica, Arial, sans-serif;
+  --font-body: 'Archivo', Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* ---------- Radios ---------- */
+  --radius-pill: 999px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 9px;
+
+  /* ---------- Sombra ---------- */
+  --shadow-hover: 0 12px 32px rgba(16, 21, 18, 0.07);
+
+  /* ---------- Layout ---------- */
+  --max-width: 1240px;
+
+  /* ---------- Transiciones ---------- */
+  --transition: all 0.2s ease;
 }
 
 * {
@@ -25,8 +59,8 @@
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-dark);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
@@ -37,14 +71,18 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-title);
-  font-weight: 700;
-  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 a {
-  color: inherit;
+  color: var(--accent);
   text-decoration: none;
   transition: var(--transition);
+}
+a:hover {
+  color: var(--accent-hover);
 }
 
 button {
@@ -61,11 +99,15 @@ img {
   display: block;
 }
 
+::selection {
+  background: var(--selection);
+}
+
 /* Utilities */
 .container {
-  max-width: 1200px;
+  max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 32px;
 }
 
 html {

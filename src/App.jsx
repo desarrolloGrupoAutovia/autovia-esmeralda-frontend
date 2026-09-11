@@ -1,8 +1,9 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
-import Hero from './components/Hero/Hero';
-import InfoSection from './components/InfoSection/InfoSection';
-import Location from './components/Location/Location';
+import Home from './components/Home/Home';
+import Inventory from './components/Inventory/Inventory';
+import CarDetail from './components/CarDetail/CarDetail';
 import Footer from './components/Footer/Footer';
 
 function App() {
@@ -10,9 +11,11 @@ function App() {
     <>
       <Header />
       <main>
-        <Hero />
-        <InfoSection />
-        <Location />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/inventario" element={<Inventory />} />
+          <Route path="/inventario/:slug" element={<CarDetail />} />
+        </Routes>
       </main>
       <Footer />
     </>

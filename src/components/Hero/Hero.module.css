@@ -1,122 +1,162 @@
 .hero {
-  position: relative;
-  height: 100vh;
-  min-height: 600px;
-  display: flex;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 56px 32px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.02fr 1fr;
+  gap: 56px;
   align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  text-align: center;
-  background-color: var(--text-dark);
-  margin-top: 80px; /* Offset for the fixed header */
-  overflow: hidden;
 }
 
-.bgImage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.65; /* Nice dark overlay effect to keep text readable */
-  z-index: 1;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, rgba(29, 14, 3, 0.4) 0%, rgba(29, 14, 3, 0.8) 100%);
-  z-index: 2;
-}
-
-.content {
-  position: relative;
-  z-index: 3;
-  max-width: 900px;
-  padding: 0 24px;
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--accent-border);
+  background: var(--bg-tint);
+  color: var(--accent);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .title {
-  font-size: 5.75rem; /* ~92px */
-  font-weight: 700;
+  margin: 22px 0 0;
+  font-size: 60px;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  text-wrap: pretty;
+}
+
+.lead {
+  margin: 22px 0 0;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--text-body);
+  max-width: 520px;
+  text-wrap: pretty;
+}
+
+.leadStrong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stats {
+  margin-top: 30px;
+  display: flex;
+  gap: 36px;
+}
+
+.statValue {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.statUnit {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.statDivider {
+  width: 1px;
+  background: var(--border);
+}
+
+.imgWrap {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #E7EBE8;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.searchBar {
+  margin-top: 44px;
+  background: var(--bg-dark);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.searchLabel {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--text-on-dark-secondary);
   margin-bottom: 8px;
-  letter-spacing: -2px;
-  animation: fadeInDown 1s ease-out;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
 }
 
-.subtitle {
-  font-size: 3.125rem; /* ~50px */
-  font-style: italic;
-  font-weight: 300;
-  margin-bottom: 40px;
-  color: var(--bg-color); /* Cream text */
-  animation: fadeInUp 1s ease-out 0.2s both;
-  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+.searchInput {
+  width: 100%;
+  appearance: none;
+  background: var(--bg-dark-input);
+  color: #fff;
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
 }
 
-.ctaBtn {
-  display: inline-block;
-  background-color: var(--accent-red);
-  color: #ffffff;
-  font-family: var(--font-title);
-  font-size: 1.25rem;
+.searchBtn {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  padding: 15px 34px;
+  font-size: 16px;
   font-weight: 700;
-  padding: 16px 36px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(201, 28, 28, 0.4);
-  transition: var(--transition);
-  animation: fadeInUp 1s ease-out 0.4s both;
+  text-align: center;
 }
 
-.ctaBtn:hover {
-  background-color: #e02424;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(201, 28, 28, 0.6);
+.searchBtn:hover {
+  background: var(--accent-solid-hover);
+  color: #fff;
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.searchSummary {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: var(--text-on-dark-secondary);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@media (max-width: 768px) {
   .title {
-    font-size: 3.5rem;
-    letter-spacing: -1px;
-  }
-  
-  .subtitle {
-    font-size: 2rem;
-    margin-bottom: 30px;
+    font-size: 40px;
   }
 
-  .ctaBtn {
-    font-size: 1rem;
-    padding: 12px 28px;
+  .searchBar {
+    grid-template-columns: 1fr;
   }
 }
