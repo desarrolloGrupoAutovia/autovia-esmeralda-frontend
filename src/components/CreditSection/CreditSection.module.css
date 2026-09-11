@@ -1,0 +1,396 @@
+.section {
+  margin-top: 96px;
+  background: var(--bg-dark);
+  color: #fff;
+}
+
+.inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 88px 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border-dark);
+  color: var(--accent-bright);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 20px 0 0;
+  font-size: 46px;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+.lead {
+  margin: 20px 0 0;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--text-on-dark-body);
+  max-width: 520px;
+  text-wrap: pretty;
+}
+
+.factsGrid {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-dark);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.factCard {
+  background: var(--bg-dark-card);
+  padding: 22px;
+}
+
+.factValue {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--accent-bright);
+}
+
+.factLabel {
+  font-size: 14px;
+  color: var(--text-on-dark-body);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* ---------- simulador ---------- */
+.simulator {
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.simTitle {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.simNote {
+  font-size: 14px;
+  color: var(--text-on-dark-secondary);
+  margin-top: 6px;
+}
+
+.field {
+  margin-top: 26px;
+}
+
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.fieldLabel {
+  color: var(--text-on-dark-body);
+}
+
+.fieldValue {
+  font-weight: 700;
+}
+
+.fieldNote {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-on-dark-secondary);
+  margin-top: 8px;
+}
+
+.slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.plazoLabel {
+  font-size: 14px;
+  color: var(--text-on-dark-body);
+  margin-bottom: 10px;
+}
+
+.plazoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.plazoBtn {
+  border-radius: 11px;
+  padding: 12px 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-dark-input);
+  color: var(--text-on-dark-body);
+}
+
+.plazoBtnActive {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.result {
+  margin-top: 26px;
+  border-top: 1px solid var(--border-dark);
+  padding-top: 22px;
+}
+
+.resultLabel {
+  font-size: 13px;
+  color: var(--text-on-dark-secondary);
+}
+
+.resultValue {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--accent-bright);
+  line-height: 1.1;
+}
+
+.resultNote {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-on-dark-secondary);
+  margin-top: 6px;
+}
+
+.breakdown {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 14px;
+}
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.breakdownValue {
+  font-weight: 600;
+}
+
+.inicialBox {
+  margin-top: 18px;
+  border-top: 1px solid var(--border-dark);
+  padding-top: 16px;
+}
+
+.inicialRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.inicialValue {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.ctaBtn {
+  display: block;
+  margin-top: 22px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ctaBtn:hover {
+  background: var(--accent-solid-hover);
+  color: #fff;
+}
+
+/* ---------- comparativa de rutas ---------- */
+.rutas {
+  margin-top: 64px;
+  border-top: 1px solid var(--border-dark);
+  padding-top: 48px;
+}
+
+.rutasTitle {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.rutasLead {
+  margin: 12px 0 0;
+  font-size: 17px;
+  color: var(--text-on-dark-body);
+  max-width: 660px;
+  text-wrap: pretty;
+}
+
+.rutasGrid {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.rutaCard {
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.rutaCardActive {
+  border-color: var(--accent);
+}
+
+.rutaHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rutaTag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+}
+
+.rutaTagMuted {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-secondary);
+}
+
+.rutaPill {
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+}
+
+.rutaPillMuted {
+  border: 1px solid var(--border-dark);
+  color: var(--text-on-dark-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+}
+
+.rutaName {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-top: 14px;
+  line-height: 1.2;
+}
+
+.rutaBody {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-on-dark-body);
+}
+
+.rutaStrong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.rutaSpecs {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.rutaSpecRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-dark);
+  padding-bottom: 10px;
+  color: var(--text-on-dark-body);
+}
+
+.rutaSpecRowLast {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.rutaSpecValue {
+  font-weight: 700;
+  color: #fff;
+}
+
+.rutaSpecValueBright {
+  font-weight: 700;
+  color: var(--accent-bright);
+}
+
+.rutasFoot {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-on-dark-secondary);
+  line-height: 1.6;
+  max-width: 860px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .title {
+    font-size: 34px;
+  }
+}

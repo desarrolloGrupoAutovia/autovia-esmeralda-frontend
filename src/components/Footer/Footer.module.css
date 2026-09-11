@@ -1,78 +1,136 @@
 .footer {
-  background-color: var(--text-dark);
-  color: #ffffff;
-  padding: 60px 24px 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 96px;
+  background: var(--bg-dark);
+  color: var(--text-on-dark-body);
 }
 
-.container {
-  max-width: 1200px;
+.inner {
+  max-width: var(--max-width);
   margin: 0 auto;
+  padding: 64px 32px 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 44px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.logoMark {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--accent);
+  display: block;
+}
+
+.brandName {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brandDesc {
+  margin: 16px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.colLabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-secondary);
+}
+
+.colLabelSpaced {
+  margin-top: 26px;
+}
+
+.colLinks {
+  margin-top: 14px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 40px;
+  gap: 10px;
+  font-size: 14px;
 }
 
-.socialSection {
-  text-align: center;
+.colLinks a,
+.socialRow a {
+  color: var(--text-on-dark-body);
 }
 
-.socialTitle {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: var(--bg-color);
-  font-weight: 500;
+.colLinks a:hover,
+.socialRow a:hover {
+  color: var(--accent-bright);
 }
 
-.socialLinks {
+.socialRow {
+  margin-top: 14px;
   display: flex;
-  gap: 20px;
-  justify-content: center;
+  gap: 14px;
+  font-size: 14px;
 }
 
-.socialIcon {
+.marcasRow {
+  margin-top: 14px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background-color: rgba(255, 246, 239, 0.1);
-  color: #ffffff;
-  font-size: 1.25rem;
-  transition: var(--transition);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.socialIcon:hover {
-  background-color: var(--accent-red);
-  transform: translateY(-3px);
+.marcaPill {
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-on-dark-body);
+}
+
+.marcaPill:hover {
+  border-color: var(--accent);
+  color: var(--accent-bright);
 }
 
 .bottomBar {
-  width: 100%;
-  padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 44px;
+  border-top: 1px solid var(--border-dark);
+  padding-top: 22px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  color: var(--text-muted);
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-on-dark-secondary);
 }
 
-.privacyLink {
-  color: var(--text-muted);
-  transition: var(--transition);
+.disclaimer {
+  max-width: 760px;
+  line-height: 1.6;
 }
 
-.privacyLink:hover {
-  color: var(--bg-color);
+.copyright {
+  white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .bottomBar {
-    flex-direction: column;
-    gap: 16px;
-    text-align: center;
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 }

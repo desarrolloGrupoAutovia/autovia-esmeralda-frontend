@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import logoImg from '../../assets/images/2c5d2d17-9dad-4a8a-af30-4cacd335c11c.webp';
 
-export default function Header({ currentView, onViewChange }) {
+const NAV_ITEMS = [
+  { label: 'Inventario', to: '/inventario' },
+  { label: 'Autovía Credit', to: '/', anchor: 'credit' },
+  { label: 'Garantía', to: '/', anchor: 'garantia' },
+  { label: 'Nosotros', to: '/', anchor: 'nosotros' },
+  { label: 'Contacto', to: '/', anchor: 'contacto' },
+];
+
+export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-
-  const handleNavClick = (view, anchorId) => {
-    onViewChange(view);
+  const irA = (to, anchorId) => {
     setIsOpen(false);
-    
-    // If we switch to 'inicio' and want to scroll to an anchor
-    if (view === 'inicio' && anchorId) {
+
+    if (to === '/' && anchorId && location.pathname === '/') {
+      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    navigate(to);
+    if (to === '/' && anchorId) {
       setTimeout(() => {
-        const element = document.getElementById(anchorId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -26,80 +35,75 @@ export default function Header({ currentView, onViewChange }) {
 
   return (
     <header className={styles.header}>
-      {/* Top Bar with Logo and Info */}
-      <div className={styles.topBar}>
-        <div className={styles.topContainer}>
-          <div className={styles.brand} onClick={() => handleNavClick('inicio')} style={{ cursor: 'pointer' }}>
-            <img src={logoImg} alt="Autovía Esmeralda Logo" className={styles.logoImage} />
-            <div className={styles.brandText}>
-              <span className={styles.title}>AUTOVÍA ESMERALDA</span>
-              <span className={styles.subtitle}>"Excelencia sobre ruedas"</span>
-            </div>
-          </div>
+      <div className={styles.inner}>
+        <Link
+          to="/"
+          className={styles.brand}
+          onClick={(e) => { e.preventDefault(); irA('/'); }}
+        >
+          <span className={styles.logoMark}></span>
+          <span className={styles.brandName}>
+            Autovía <span className={styles.brandAccent}>Esmeralda</span>
+          </span>
+        </Link>
 
-          <div className={styles.contactInfo}>
-            <div className={styles.infoItem}>
-              <span className={styles.icon}>📍</span>
-              <span>Autovía Esmeralda...</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.icon}>📞</span>
-              <a href="tel:5554340686">55 5434 0686</a>
-            </div>
-          </div>
-        </div>
+        <nav className={styles.nav}>
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.label}
+              href={item.anchor ? `#${item.anchor}` : item.to}
+              className={`${styles.navLink} ${location.pathname === item.to && !item.anchor ? styles.active : ''}`}
+              onClick={(e) => { e.preventDefault(); irA(item.to, item.anchor); }}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <a
+          href="https://wa.me/5215554340686"
+          target="_blank"
+          rel="noreferrer"
+          className={styles.whatsappBtn}
+        >
+          <span className={styles.dot}></span>
+          WhatsApp
+        </a>
+
+        <button
+          className={styles.menuBtn}
+          onClick={() => setIsOpen((v) => !v)}
+          aria-label="Abrir menú"
+          aria-expanded={isOpen}
+        >
+          <span></span>
+          <span></span>
+        </button>
       </div>
 
-      {/* Bottom Teal Navigation Bar */}
-      <div className={styles.navBar}>
-        <div className={styles.navContainer}>
-          <button className={styles.mobileMenuBtn} onClick={toggleMenu} aria-label="Toggle menu">
-            <span style={{ transform: isOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }}></span>
-            <span style={{ opacity: isOpen ? 0 : 1 }}></span>
-            <span style={{ transform: isOpen ? 'rotate(-45deg) translate(6px, -7px)' : 'none' }}></span>
-          </button>
-
-          <nav className={`${styles.navList} ${isOpen ? styles.open : ''}`}>
-            <li className={`${styles.navItem} ${currentView === 'inicio' ? styles.active : ''}`}>
-              <a href="#principal" onClick={(e) => { e.preventDefault(); handleNavClick('inicio'); }}>
-                Página principal
-              </a>
-            </li>
-
-            <li className={`${styles.navItem} ${currentView === 'tienda' ? styles.active : ''}`}>
-              <a href="#comprar" onClick={(e) => { e.preventDefault(); handleNavClick('tienda'); }}>
-                Comprar un auto
-              </a>
-            </li>
-
-            <li className={styles.navItem}>
-              <span className={styles.dropdownToggle}>Autovía Esmeralda ▾</span>
-              <ul className={styles.dropdown}>
-                <li className={styles.dropdownItem}>
-                  <a href="#mision-vision" onClick={(e) => { e.preventDefault(); handleNavClick('inicio', 'mision-vision'); }}>
-                    Misión
-                  </a>
-                </li>
-                <li className={styles.dropdownItem}>
-                  <a href="#mision-vision" onClick={(e) => { e.preventDefault(); handleNavClick('inicio', 'mision-vision'); }}>
-                    Visión
-                  </a>
-                </li>
-                <li className={styles.dropdownItem}>
-                  <a href="#mision-vision" onClick={(e) => { e.preventDefault(); handleNavClick('inicio', 'mision-vision'); }}>
-                    Clientes Satisfechos
-                  </a>
-                </li>
-                <li className={styles.dropdownItem}>
-                  <a href="#sucursal" onClick={(e) => { e.preventDefault(); handleNavClick('inicio', 'sucursal'); }}>
-                    Sucursal
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </nav>
+      {isOpen && (
+        <div className={styles.mobileMenu}>
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.label}
+              href={item.anchor ? `#${item.anchor}` : item.to}
+              className={styles.mobileNavLink}
+              onClick={(e) => { e.preventDefault(); irA(item.to, item.anchor); }}
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="https://wa.me/5215554340686"
+            target="_blank"
+            rel="noreferrer"
+            className={styles.mobileWhatsapp}
+          >
+            <span className={styles.dot}></span>
+            WhatsApp
+          </a>
         </div>
-      </div>
+      )}
     </header>
   );
 }

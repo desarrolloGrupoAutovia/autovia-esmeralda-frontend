@@ -1,0 +1,159 @@
+.section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 88px 32px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.title {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1.06;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.lead {
+  margin: 18px 0 0;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text-body);
+  text-wrap: pretty;
+}
+
+.levels {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.level {
+  border: 1px solid var(--border-neutral);
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+
+.levelActive {
+  border-color: var(--accent);
+  background: var(--bg-tint);
+}
+
+.levelTag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.levelTagMuted {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.levelValue {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-top: 8px;
+}
+
+.levelDetail {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.checks {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 99px;
+  background: var(--accent);
+  display: block;
+  flex-shrink: 0;
+}
+
+.pointsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.pointCard {
+  background: #fff;
+  padding: 24px 20px;
+  min-height: 132px;
+}
+
+.pointCode {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bg-tint);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pointName {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 14px;
+  letter-spacing: -0.01em;
+}
+
+.pointNote {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .pointsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .pointsGrid {
+    grid-template-columns: 1fr;
+  }
+}

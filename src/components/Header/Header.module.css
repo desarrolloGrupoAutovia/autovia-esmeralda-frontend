@@ -1,226 +1,155 @@
 .header {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  z-index: 50;
+  background: rgba(250, 251, 250, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
 }
 
-/* Top bar styles */
-.topBar {
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--border-color);
-  padding: 12px 24px;
-}
-
-.topContainer {
-  max-width: 1200px;
+.inner {
+  max-width: var(--max-width);
   margin: 0 auto;
+  padding: 0 32px;
+  height: 76px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 32px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  color: var(--text-primary);
+  flex-shrink: 0;
 }
 
-.logoImage {
-  height: 48px;
-  width: auto;
+.logoMark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--accent);
+  display: block;
 }
 
-.brandText {
-  display: flex;
-  flex-direction: column;
+.brandName {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
 
-.title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--text-dark);
+.brandAccent {
+  color: var(--accent);
 }
 
-.subtitle {
-  font-size: 0.8rem;
-  font-family: var(--font-body);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: -2px;
-}
-
-.contactInfo {
+.nav {
   display: flex;
   align-items: center;
-  gap: 32px;
-  font-size: 0.95rem;
-}
-
-.infoItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-dark);
-}
-
-.icon {
-  color: #162d3d; /* Dark teal icon color */
-  font-size: 1.1rem;
-}
-
-/* Bottom Nav bar styles */
-.navBar {
-  background-color: #0b3d32; /* Dark teal background matching Wix screenshot */
-  padding: 0 24px;
-}
-
-.navContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
+  gap: 30px;
+  flex: 1;
   justify-content: center;
-  align-items: center;
-  position: relative;
 }
 
-.navList {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.navItem {
-  position: relative;
-}
-
-.navItem > a,
-.dropdownToggle {
-  display: block;
-  padding: 16px 32px;
-  color: #ffffff;
-  font-family: var(--font-title);
+.navLink {
+  font-size: 15px;
   font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-  text-align: center;
+  color: var(--text-secondary);
 }
 
-.navItem > a:hover,
-.dropdownToggle:hover,
-.navItem.active > a {
-  background-color: #0d4d3f; /* Slightly lighter teal */
+.navLink:hover,
+.navLink.active {
+  color: var(--accent);
 }
 
-/* Dropdown Menu */
-.dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #0b3d32;
-  min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-  display: none;
-  list-style: none;
-  padding: 8px 0;
-  border-top: 2px solid var(--accent-red);
+.whatsappBtn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
-.navItem:hover .dropdown {
+.whatsappBtn:hover {
+  background: var(--accent-solid-hover);
+  color: #fff;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--accent-bright);
   display: block;
 }
 
-.dropdownItem a {
-  display: block;
-  padding: 12px 24px;
-  color: #ffffff;
-  font-size: 0.95rem;
-  transition: var(--transition);
-}
-
-.dropdownItem a:hover {
-  background-color: #0d4d3f;
-  color: var(--bg-color);
-}
-
-/* Mobile responsive menu */
-.mobileMenuBtn {
+.menuBtn {
   display: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: 1px solid var(--border-neutral);
+  background: #fff;
   flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 18px;
-  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
-.mobileMenuBtn span {
-  display: block;
+.menuBtn span {
+  width: 16px;
   height: 2px;
-  width: 100%;
-  background-color: #ffffff;
-  transition: var(--transition);
+  background: var(--text-primary);
+  display: block;
 }
 
-@media (max-width: 768px) {
-  .topContainer {
-    justify-content: center;
-  }
+.mobileMenu {
+  background: var(--bg-dark);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-  .contactInfo {
-    width: 100%;
-    justify-content: center;
-    gap: 16px;
-  }
+.mobileNavLink {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-dark);
+}
 
-  .navContainer {
-    justify-content: space-between;
-    height: 50px;
-  }
+.mobileNavLink:hover {
+  color: var(--accent-bright);
+}
 
-  .navList {
+.mobileWhatsapp {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 16px 0 4px;
+}
+
+@media (max-width: 860px) {
+  .nav,
+  .whatsappBtn {
     display: none;
-    position: absolute;
-    top: 50px;
-    left: -24px;
-    width: calc(100% + 48px);
-    background-color: #0b3d32;
-    flex-direction: column;
-    padding: 16px 0;
   }
 
-  .navList.open {
+  .menuBtn {
     display: flex;
-  }
-
-  .navItem > a,
-  .dropdownToggle {
-    padding: 14px 24px;
-    text-align: left;
-  }
-
-  .dropdown {
-    position: static;
-    box-shadow: none;
-    background-color: #0d4d3f;
-    border-top: none;
-    padding: 0;
-  }
-
-  .navItem:hover .dropdown {
-    display: block;
-  }
-
-  .mobileMenuBtn {
-    display: flex;
-    margin-left: auto;
-    padding: 16px 0;
   }
 }
