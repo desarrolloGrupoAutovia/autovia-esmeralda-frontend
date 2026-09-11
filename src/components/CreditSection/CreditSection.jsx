@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './CreditSection.module.css';
 import { useCotizador } from '../../lib/useCotizador';
 import { mxn, ENGANCHE_MINIMO_PCT } from '../../lib/credito';
@@ -106,13 +107,9 @@ export default function CreditSection() {
               </div>
             </div>
 
-            <a
-              href="https://wa.me/525554340686?text=Hola,%20quiero%20cotizar%20un%20auto%20con%20Autov%C3%ADa%20Credit"
-              target="_blank" rel="noreferrer"
-              className={styles.ctaBtn}
-            >
-              Cotizar por WhatsApp
-            </a>
+            <Link to="/inventario" className={styles.ctaBtn}>
+              Ir al inventario
+            </Link>
           </div>
         </div>
 
