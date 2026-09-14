@@ -28,22 +28,10 @@
 }
 
 .logoMark {
-  width: 30px;
-  height: 30px;
+  height: 36px;
+  width: auto;
   object-fit: contain;
   display: block;
-}
-
-.brandName {
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-.brandAccent {
-  color: var(--accent);
 }
 
 .nav {

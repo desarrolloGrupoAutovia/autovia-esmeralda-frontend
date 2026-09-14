@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Footer.module.css';
 import { useCatalogo } from '../../lib/catalogo';
 import { marcasConConteo, tituloMarca } from '../../lib/cars';
-import logoIcono from '../../assets/images/logo-icono.png';
+import logoCompletoOscuro from '../../assets/images/logo-completo-oscuro.png';
 
 export default function Footer() {
   const { autos } = useCatalogo();
@@ -31,8 +31,7 @@ export default function Footer() {
         <div className={styles.grid}>
           <div>
             <div className={styles.brand}>
-              <img src={logoIcono} alt="" className={styles.logoMark} />
-              <span className={styles.brandName}>Autovía Esmeralda</span>
+              <img src={logoCompletoOscuro} alt="Autovía Esmeralda" className={styles.logoMark} />
             </div>
             <p className={styles.brandDesc}>
               Agencia de seminuevos certificados con financiamiento propio. Vendemos exclusivamente inventario propio.
