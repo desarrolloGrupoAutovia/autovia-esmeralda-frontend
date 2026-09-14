@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import styles from './Brands.module.css';
 import { useCatalogo } from '../../lib/catalogo';
 import { marcasConConteo, tituloMarca } from '../../lib/cars';
+import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 
 export default function Brands() {
   const ref = useRef(null);
+  const { handlers } = useArrastreHorizontal(ref);
   const { autos } = useCatalogo();
   const marcas = marcasConConteo(autos);
 
@@ -23,7 +25,7 @@ export default function Brands() {
         </div>
       </div>
 
-      <div className={styles.scroller} ref={ref}>
+      <div className={styles.scroller} ref={ref} {...handlers}>
         {marcas.map(({ marca }) => (
           <Link
             key={marca}

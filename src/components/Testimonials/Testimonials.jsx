@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import { useResenas } from '../../lib/resenas';
+import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 import styles from './Testimonials.module.css';
 
 export default function Testimonials() {
   const ref = useRef(null);
+  const { handlers } = useArrastreHorizontal(ref);
   const { resenas, rating, totalResenas, cargando, error } = useResenas();
 
   const scrollBy = (dx) => ref.current?.scrollBy({ left: dx, behavior: 'smooth' });
@@ -27,7 +29,7 @@ export default function Testimonials() {
         </div>
       </div>
 
-      <div className={styles.scroller} ref={ref}>
+      <div className={styles.scroller} ref={ref} {...handlers}>
         {resenas.map((r) => (
           <div key={r.autor} className={styles.card}>
             <div className={styles.quote}>{r.texto}</div>

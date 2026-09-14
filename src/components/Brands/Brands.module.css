@@ -45,12 +45,28 @@
   gap: 14px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 6px;
-  scrollbar-width: none;
+  padding-bottom: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-neutral) transparent;
+  cursor: grab;
+  user-select: none;
 }
 
 .scroller::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+}
+
+.scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroller::-webkit-scrollbar-thumb {
+  background: var(--border-neutral);
+  border-radius: 99px;
+}
+
+.scroller:global(.arrastrando) {
+  cursor: grabbing;
 }
 
 .card {

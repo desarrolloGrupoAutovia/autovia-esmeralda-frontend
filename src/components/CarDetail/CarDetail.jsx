@@ -7,6 +7,7 @@ import { mxn, ENGANCHE_MINIMO_PCT } from '../../lib/credito';
 import { useCotizador } from '../../lib/useCotizador';
 import { useCatalogo } from '../../lib/catalogo';
 import { enviarOtp, verificarOtp } from '../../lib/otp';
+import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 
 const PLAZOS = [12, 24, 36, 48];
 const REENVIO_COOLDOWN_S = 32;
@@ -32,6 +33,7 @@ function garantiaDe(anio) {
 export default function CarDetail() {
   const { slug: carSlug } = useParams();
   const { autos, cargando: catalogoCargando, error: catalogoError } = useCatalogo();
+  const thumbsArrastre = useArrastreHorizontal();
   const [car, setCar] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -229,7 +231,7 @@ export default function CarDetail() {
             </div>
 
             {car.images.length > 1 && (
-              <div className={styles.thumbnails}>
+              <div className={styles.thumbnails} ref={thumbsArrastre.ref} {...thumbsArrastre.handlers}>
                 {car.images.map((imagePath, index) => {
                   const thumbUrl = getCarImageUrl(imagePath);
                   return (

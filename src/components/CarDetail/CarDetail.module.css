@@ -90,11 +90,28 @@
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  scrollbar-width: none;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-neutral) transparent;
+  cursor: grab;
+  user-select: none;
+}
+
+.thumbnails:global(.arrastrando) {
+  cursor: grabbing;
 }
 
 .thumbnails::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+}
+
+.thumbnails::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thumbnails::-webkit-scrollbar-thumb {
+  background: var(--border-neutral);
+  border-radius: 99px;
 }
 
 .thumbBtn {
