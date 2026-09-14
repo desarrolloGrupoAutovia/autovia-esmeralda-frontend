@@ -26,8 +26,7 @@
 .logoMark {
   width: 26px;
   height: 26px;
-  border-radius: 8px;
-  background: var(--accent);
+  object-fit: contain;
   display: block;
 }
 

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Hero.module.css';
-import bgImage from '../../assets/images/9992a2_ea59b43f57714f789ce11a1264a66f18_mv2.webp';
+import bgImage from '../../assets/images/hero-entrega.webp';
 import { useCatalogo } from '../../lib/catalogo';
 import { marcasConConteo, tituloMarca, parsePrice } from '../../lib/cars';
 import { MENSUALIDAD_MIN, MENSUALIDAD_MAX } from '../Inventory/Inventory';
@@ -75,7 +75,7 @@ export default function Hero() {
         </div>
 
         <div className={styles.imgWrap}>
-          <img src={bgImage} alt="Showroom Autovía Esmeralda" className={styles.img} />
+          <img src={bgImage} alt="Entrega de auto en Autovía Esmeralda" className={styles.img} />
         </div>
       </div>
 

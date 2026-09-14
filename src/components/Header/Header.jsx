@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
+import logoIcono from '../../assets/images/logo-icono.png';
 
 const NAV_ITEMS = [
   { label: 'Inventario', to: '/inventario' },
@@ -41,7 +42,7 @@ export default function Header() {
           className={styles.brand}
           onClick={(e) => { e.preventDefault(); irA('/'); }}
         >
-          <span className={styles.logoMark}></span>
+          <img src={logoIcono} alt="" className={styles.logoMark} />
           <span className={styles.brandName}>
             Autovía <span className={styles.brandAccent}>Esmeralda</span>
           </span>

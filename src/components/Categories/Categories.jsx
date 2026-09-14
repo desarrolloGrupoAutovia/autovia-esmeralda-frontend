@@ -2,14 +2,18 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Categories.module.css';
 import { useCatalogo } from '../../lib/catalogo';
+import imgAutos from '../../assets/images/categoria-autos.webp';
+import imgCamionetas from '../../assets/images/categoria-camionetas.webp';
+import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 
 const TIPOS = [
-  { value: 'AUTOS', label: 'Autos' },
-  { value: 'CAMIONETAS', label: 'Camionetas' },
+  { value: 'AUTOS', label: 'Autos', img: imgAutos },
+  { value: 'CAMIONETAS', label: 'Camionetas', img: imgCamionetas },
 ];
 
 export default function Categories() {
   const ref = useRef(null);
+  const { handlers } = useArrastreHorizontal(ref);
   const { autos } = useCatalogo();
 
   const categorias = TIPOS.map((t) => ({
@@ -36,12 +40,13 @@ export default function Categories() {
         </div>
       </div>
 
-      <div className={styles.scroller} ref={ref}>
+      <div className={styles.scroller} ref={ref} {...handlers}>
         {categorias.map((cat) => (
           <Link
             key={cat.value}
             to={`/inventario?tipo=${cat.value}`}
             className={styles.card}
+            style={{ backgroundImage: `url(${cat.img})` }}
           >
             <span className={styles.name}>{cat.label}</span>
             <span className={styles.count}>{cat.count} disponibles</span>

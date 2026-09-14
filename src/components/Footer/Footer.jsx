@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Footer.module.css';
 import { useCatalogo } from '../../lib/catalogo';
 import { marcasConConteo, tituloMarca } from '../../lib/cars';
+import logoIcono from '../../assets/images/logo-icono.png';
 
 export default function Footer() {
   const { autos } = useCatalogo();
@@ -30,7 +31,7 @@ export default function Footer() {
         <div className={styles.grid}>
           <div>
             <div className={styles.brand}>
-              <span className={styles.logoMark}></span>
+              <img src={logoIcono} alt="" className={styles.logoMark} />
               <span className={styles.brandName}>Autovía Esmeralda</span>
             </div>
             <p className={styles.brandDesc}>
