@@ -2,13 +2,29 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Categories.module.css';
 import { useCatalogo } from '../../lib/catalogo';
-import imgAutos from '../../assets/images/categoria-autos.webp';
-import imgCamionetas from '../../assets/images/categoria-camionetas.webp';
+import imgSedan from '../../assets/images/categoria-sedan.webp';
+import imgSuv from '../../assets/images/categoria-suv.webp';
+import imgPickup from '../../assets/images/categoria-pickup.webp';
+import imgHatchback from '../../assets/images/categoria-hatchback.webp';
+import imgCoupe from '../../assets/images/categoria-coupe.webp';
+import imgVan from '../../assets/images/categoria-van.webp';
+import imgConvertible from '../../assets/images/categoria-convertible.webp';
+import imgCompacto from '../../assets/images/categoria-compacto.webp';
 import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 
+/* Por carrocería real (car.carroceria, tal como la captura el equipo de
+   ventas en el dashboard), no por el agrupado Autos/Camionetas que usa
+   el filtro de Inventory.jsx — son dos clasificaciones distintas del
+   mismo auto, cada una para su propio propósito. */
 const TIPOS = [
-  { value: 'AUTOS', label: 'Autos', img: imgAutos },
-  { value: 'CAMIONETAS', label: 'Camionetas', img: imgCamionetas },
+  { value: 'Sedán', label: 'Sedán', img: imgSedan },
+  { value: 'SUV', label: 'SUV', img: imgSuv },
+  { value: 'Pickup', label: 'Pickup', img: imgPickup },
+  { value: 'Hatchback', label: 'Hatchback', img: imgHatchback },
+  { value: 'Coupé', label: 'Coupé', img: imgCoupe },
+  { value: 'Van', label: 'Van', img: imgVan },
+  { value: 'Convertible', label: 'Convertible', img: imgConvertible },
+  { value: 'Compacto', label: 'Compacto', img: imgCompacto },
 ];
 
 export default function Categories() {
@@ -18,7 +34,7 @@ export default function Categories() {
 
   const categorias = TIPOS.map((t) => ({
     ...t,
-    count: autos.filter((c) => c.category === t.value).length,
+    count: autos.filter((c) => c.carroceria === t.value).length,
   })).filter((c) => c.count > 0);
 
   const scrollBy = (dx) => ref.current?.scrollBy({ left: dx, behavior: 'smooth' });
@@ -44,7 +60,7 @@ export default function Categories() {
         {categorias.map((cat) => (
           <Link
             key={cat.value}
-            to={`/inventario?tipo=${cat.value}`}
+            to={`/inventario?carroceria=${encodeURIComponent(cat.value)}`}
             className={styles.card}
             style={{ backgroundImage: `url(${cat.img})` }}
           >

@@ -92,18 +92,6 @@ export default function CreditSection() {
                   <span className={styles.fieldLabel}>Enganche</span>
                   <span className={styles.breakdownValue}>{mxn(q.enganche)}</span>
                 </div>
-                <div className={styles.breakdownRow}>
-                  <span className={styles.fieldLabel}>Monto a financiar</span>
-                  <span className={styles.breakdownValue}>{mxn(q.financiado)}</span>
-                </div>
-              </div>
-
-              <div className={styles.inicialBox}>
-                <div className={styles.inicialRow}>
-                  <span className={styles.fieldLabel}>Pago inicial</span>
-                  <span className={styles.inicialValue}>{mxn(q.inicial)}</span>
-                </div>
-                <div className={styles.simNote}>Incluye enganche y gastos iniciales del crédito. Te lo desglosamos por WhatsApp.</div>
               </div>
             </div>
 

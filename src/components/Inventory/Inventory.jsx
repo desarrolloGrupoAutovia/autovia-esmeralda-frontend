@@ -6,12 +6,6 @@ import { parsePrice, parseMarca, marcasConConteo, tituloMarca } from '../../lib/
 import { mensualidadEstimada, mxn } from '../../lib/credito';
 import { useCatalogo } from '../../lib/catalogo';
 
-const TIPOS = [
-  { value: 'todos', label: 'Todos' },
-  { value: 'AUTOS', label: 'Autos' },
-  { value: 'CAMIONETAS', label: 'Camionetas' },
-];
-
 const ORDEN_OPTIONS = [
   { value: 'relevancia', label: 'Ordenar por: Relevancia' },
   { value: 'bajo-alto', label: 'Precio: Bajo a Alto' },
@@ -24,14 +18,17 @@ export const MENSUALIDAD_MIN = 6000;
 export const MENSUALIDAD_MAX = 16000;
 const TODAS_MARCAS = 'Todas las marcas';
 
-/* Los filtros viven en la URL (?tipo=&marca=&maxPrecio=&maxMensualidad=&orden=)
+/* Los filtros viven en la URL (?carroceria=&marca=&maxPrecio=&maxMensualidad=&orden=)
    en vez de useState local: así son compartibles, sobreviven a un F5, y
    atrás/adelante del navegador los restaura solos — nada de esto pasaba
    cuando el "routing" era un switch de estado en memoria. */
+const TODAS_CARROCERIAS = 'todas';
+const CARROCERIA_LABEL = { [TODAS_CARROCERIAS]: 'Todos' };
+
 export default function Inventory() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const tipo = searchParams.get('tipo') || 'todos';
+  const carroceria = searchParams.get('carroceria') || TODAS_CARROCERIAS;
   const marca = searchParams.get('marca') || TODAS_MARCAS;
   const maxPrecio = Number(searchParams.get('maxPrecio')) || PRECIO_MAX;
   const maxMensualidad = Number(searchParams.get('maxMensualidad')) || MENSUALIDAD_MAX;
@@ -51,9 +48,14 @@ export default function Inventory() {
     [autos]
   );
 
+  const carroceriaOptions = useMemo(
+    () => [TODAS_CARROCERIAS, ...new Set(autos.map((c) => c.carroceria).filter(Boolean))],
+    [autos]
+  );
+
   const filtrados = useMemo(() => {
     let lista = autos.filter((car) => {
-      if (tipo !== 'todos' && car.category !== tipo) return false;
+      if (carroceria !== TODAS_CARROCERIAS && car.carroceria !== carroceria) return false;
       if (marca !== TODAS_MARCAS && parseMarca(car.name) !== marca) return false;
       if (parsePrice(car.price) > maxPrecio) return false;
       if (mensualidadEstimada(parsePrice(car.price)) > maxMensualidad) return false;
@@ -64,10 +66,10 @@ export default function Inventory() {
     if (orden === 'alto-bajo') lista = [...lista].sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
 
     return lista;
-  }, [autos, tipo, marca, maxPrecio, maxMensualidad, orden]);
+  }, [autos, carroceria, marca, maxPrecio, maxMensualidad, orden]);
 
   const filtrosActivos = [];
-  if (tipo !== 'todos') filtrosActivos.push(TIPOS.find((t) => t.value === tipo)?.label);
+  if (carroceria !== TODAS_CARROCERIAS) filtrosActivos.push(carroceria);
   if (marca !== TODAS_MARCAS) filtrosActivos.push(tituloMarca(marca));
   if (maxPrecio < PRECIO_MAX) filtrosActivos.push(`Hasta ${mxn(maxPrecio)}`);
   if (maxMensualidad < MENSUALIDAD_MAX) filtrosActivos.push(`Hasta ${mxn(maxMensualidad)}/mes`);
@@ -125,15 +127,15 @@ export default function Inventory() {
           </div>
 
           <div className={styles.filterGroup}>
-            <div className={styles.filterLabel}>Tipo</div>
+            <div className={styles.filterLabel}>Carrocería</div>
             <div className={styles.chips}>
-              {TIPOS.map((t) => (
+              {carroceriaOptions.map((c) => (
                 <button
-                  key={t.value}
-                  className={`${styles.chip} ${tipo === t.value ? styles.chipActive : ''}`}
-                  onClick={() => actualizarFiltro('tipo', t.value, 'todos')}
+                  key={c}
+                  className={`${styles.chip} ${carroceria === c ? styles.chipActive : ''}`}
+                  onClick={() => actualizarFiltro('carroceria', c, TODAS_CARROCERIAS)}
                 >
-                  {t.label}
+                  {CARROCERIA_LABEL[c] || c}
                 </button>
               ))}
             </div>

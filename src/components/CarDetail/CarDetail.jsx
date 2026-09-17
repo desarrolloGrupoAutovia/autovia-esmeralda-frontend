@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import styles from './CarDetail.module.css';
 import CarCard from '../CarCard/CarCard';
 import { getCarImageUrl, parsePrice, parseAnio, parseKm } from '../../lib/cars';
@@ -7,7 +7,7 @@ import { mxn, ENGANCHE_MINIMO_PCT } from '../../lib/credito';
 import { useCotizador } from '../../lib/useCotizador';
 import { useCatalogo } from '../../lib/catalogo';
 import { enviarOtp, verificarOtp } from '../../lib/otp';
-import { crearSolicitud, actualizarSolicitud, verificarIneSolicitud, consultarEstadoIne } from '../../lib/solicitudes';
+import { crearSolicitud, actualizarSolicitud, verificarIneSolicitud, consultarEstadoIne, reanudarSolicitud } from '../../lib/solicitudes';
 import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 import CapturaIne from './CapturaIne';
 
@@ -34,6 +34,7 @@ function garantiaDe(anio) {
 
 export default function CarDetail() {
   const { slug: carSlug } = useParams();
+  const [searchParams] = useSearchParams();
   const { autos, cargando: catalogoCargando, error: catalogoError } = useCatalogo();
   const thumbsArrastre = useArrastreHorizontal();
   const [car, setCar] = useState(null);
@@ -64,7 +65,6 @@ export default function CarDetail() {
   const [solicitudId, setSolicitudId] = useState(null);
   const [guardandoPaso, setGuardandoPaso] = useState(false);
   const [envioCompletado, setEnvioCompletado] = useState(false);
-  const [linkCopiado, setLinkCopiado] = useState(false);
 
   // ---------- paso 4: verificación de la INE (VerificaMex) ----------
   const [ineFrente, setIneFrente] = useState(null);
@@ -94,6 +94,49 @@ export default function CarDetail() {
 
   useEffect(() => {
     if (car) setPrice(parsePrice(car.price));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [car]);
+
+  /* Reanudar una solicitud incompleta desde el link de seguimiento
+     (/inventario/:slug?reanudar=<id>&celular=...): trae lo ya capturado,
+     salta el OTP (ese celular ya se verificó cuando se creó la
+     solicitud) y abre el modal directo en el paso siguiente al último
+     que se guardó. */
+  useEffect(() => {
+    const reanudarId = searchParams.get('reanudar');
+    const celularReanudar = searchParams.get('celular');
+    if (!car || !reanudarId || !celularReanudar) return;
+
+    reanudarSolicitud(reanudarId, celularReanudar)
+      .then((s) => {
+        setSolicitudId(reanudarId);
+        setFormData((prev) => ({
+          ...prev,
+          celular: celularReanudar,
+          nombres: s.nombres || '', apellidos: s.apellidos || '',
+          fechaNacimiento: s.fechaNacimiento || '', curp: s.curp || '',
+          genero: s.genero || '', estadoCivil: s.estadoCivil || '',
+          dependientes: s.dependientes != null ? String(s.dependientes) : '0',
+          nivelEstudios: s.nivelEstudios || '', vehiculoPropio: s.vehiculoPropio || '',
+          ocupacion: s.ocupacion || '', empresa: s.empresa || '',
+          calle: s.calle || '', noExterior: s.noExterior || '', noInterior: s.noInterior || '',
+          codigoPostal: s.codigoPostal || '', colonia: s.colonia || '',
+          municipio: s.municipio || '', estado: s.estadoMx || '',
+          tipoVivienda: s.tipoVivienda || '',
+          anosDomicilio: s.anosDomicilio != null ? String(s.anosDomicilio) : '0',
+          telefonoFijo: s.telefonoFijo || '', correo: s.correo || '',
+          autorizacion: !!s.autorizacion,
+        }));
+        if (s.enganchePct) setDown(s.enganchePct);
+        if (s.plazoMeses) setPlazo(s.plazoMeses);
+        setFormPaso(Math.min((s.pasoAlcanzado || 0) + 1, 4));
+        setIsModalOpen(true);
+      })
+      .catch(() => {
+        // Si el link ya no es válido (celular no coincide, solicitud
+        // borrada), simplemente no se abre nada — el cliente puede
+        // empezar de cero con el botón normal de "Solicita tu crédito".
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [car]);
 
@@ -271,21 +314,6 @@ export default function CarDetail() {
     }
   };
 
-  const linkSeguimiento = solicitudId
-    ? `${window.location.origin}/seguimiento/${solicitudId}?celular=${formData.celular}`
-    : '';
-
-  const copiarLinkSeguimiento = async () => {
-    try {
-      await navigator.clipboard.writeText(linkSeguimiento);
-      setLinkCopiado(true);
-      setTimeout(() => setLinkCopiado(false), 2000);
-    } catch {
-      // Sin permiso de portapapeles: el cliente puede seleccionar el texto
-      // a mano, el input ya queda seleccionado con un click.
-    }
-  };
-
   const cerrarModalSolicitud = () => {
     setIsModalOpen(false);
     setFormPaso('celular');
@@ -294,7 +322,6 @@ export default function CarDetail() {
     setIneFrente(null);
     setIneReverso(null);
     setIneError('');
-    setLinkCopiado(false);
   };
 
   const defaultWhatsappUrl = `https://wa.me/525554340686?text=${encodeURIComponent(
@@ -453,15 +480,6 @@ export default function CarDetail() {
 
                 <div className={styles.simRows}>
                   <div className={styles.simRow}><span>Enganche {down}%</span><span className={styles.simRowValue}>{mxn(q.enganche)}</span></div>
-                  <div className={styles.simRow}><span>Monto a financiar</span><span className={styles.simRowValue}>{mxn(q.financiado)}</span></div>
-                </div>
-
-                <div className={styles.simInicial}>
-                  <div className={styles.simInicialRow}>
-                    <span>Pago inicial</span>
-                    <span className={styles.simInicialValue}>{mxn(q.inicial)}</span>
-                  </div>
-                  <div className={styles.simInicialNote}>Incluye enganche y gastos iniciales del crédito.</div>
                 </div>
 
                 <div className={styles.field}>
@@ -572,18 +590,8 @@ export default function CarDetail() {
                 <div className={styles.stepContainer}>
                   <h3 className={styles.stepTitle}>¡Listo, recibimos tu solicitud!</h3>
                   <div className={styles.infoBanner}>
-                    En un lapso de 12 horas se realizará tu preaprobación. Te contactaremos por WhatsApp al{' '}
+                    En un lapso de 15 minutos a 24 horas se realizará tu preaprobación. Te contactaremos por WhatsApp al{' '}
                     {formData.celular} para continuar tu trámite de financiamiento para el {car.name}.
-                  </div>
-
-                  <div className={styles.formField}>
-                    <label>Link para seguir el progreso de tu solicitud</label>
-                    <div className={styles.linkBox}>
-                      <input type="text" readOnly value={linkSeguimiento} onClick={(e) => e.target.select()} />
-                      <button type="button" onClick={copiarLinkSeguimiento} className={styles.linkCopyBtn}>
-                        {linkCopiado ? 'Copiado' : 'Copiar'}
-                      </button>
-                    </div>
                   </div>
 
                   <div className={styles.modalFooterSingle}>

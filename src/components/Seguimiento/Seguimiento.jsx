@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import styles from './Seguimiento.module.css';
 import { consultarSeguimiento } from '../../lib/solicitudes';
 
@@ -17,6 +17,7 @@ const ETIQUETA_ESTADO = {
 export default function Seguimiento() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const celular = searchParams.get('celular') || '';
 
   const [estado, setEstado] = useState('cargando'); // cargando | error | listo
@@ -30,8 +31,18 @@ export default function Seguimiento() {
       return;
     }
     consultarSeguimiento(id, celular)
-      .then((d) => { setDatos(d); setEstado('listo'); })
+      .then((d) => {
+        /* Incompleta y con auto identificado: no hace falta esta pantalla
+           intermedia — se va directo a retomar el formulario. */
+        if (d.estado === 'incompleta' && d.autoSlug) {
+          navigate(`/inventario/${d.autoSlug}?reanudar=${id}&celular=${celular}`, { replace: true });
+          return;
+        }
+        setDatos(d);
+        setEstado('listo');
+      })
       .catch((e) => { setError(e.message || 'No encontramos esa solicitud.'); setEstado('error'); });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, celular]);
 
   return (

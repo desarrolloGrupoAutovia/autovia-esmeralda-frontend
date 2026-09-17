@@ -59,3 +59,15 @@ export async function consultarSeguimiento(id, celular) {
   if (!r.ok) throw new Error(data.error || 'No encontramos esa solicitud.');
   return data;
 }
+
+/* El cliente retoma una solicitud incompleta desde el link de seguimiento:
+   trae TODOS los campos ya capturados para precargar el formulario en
+   CarDetail.jsx, sin volver a pedir el OTP ni volver a escribir nada. */
+export async function reanudarSolicitud(id, celular) {
+  const r = await fetch(
+    `${SOLICITUDES_URL}?id=${encodeURIComponent(id)}&celular=${encodeURIComponent(celular)}&accion=reanudar`
+  );
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || 'No encontramos esa solicitud.');
+  return data;
+}
