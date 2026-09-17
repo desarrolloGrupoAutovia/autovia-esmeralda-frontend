@@ -7,7 +7,9 @@ import { mxn, ENGANCHE_MINIMO_PCT } from '../../lib/credito';
 import { useCotizador } from '../../lib/useCotizador';
 import { useCatalogo } from '../../lib/catalogo';
 import { enviarOtp, verificarOtp } from '../../lib/otp';
+import { crearSolicitud, actualizarSolicitud, verificarIneSolicitud, consultarEstadoIne } from '../../lib/solicitudes';
 import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
+import CapturaIne from './CapturaIne';
 
 const PLAZOS = [12, 24, 36, 48];
 const REENVIO_COOLDOWN_S = 32;
@@ -38,13 +40,14 @@ export default function CarDetail() {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // 'celular' y 'codigo' verifican el WhatsApp antes de dejar avanzar al
-  // resto del formulario (1, 2, 3) — mismo patrón que Movinex.
+  // resto del formulario (1, 2, 3, 4) — mismo patrón que Movinex.
   const [formPaso, setFormPaso] = useState('celular');
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    nombres: '', apellidos: '', fechaNacimiento: '', rfc: '', genero: '',
+    nombres: '', apellidos: '', fechaNacimiento: '', curp: '', genero: '',
     estadoCivil: '', dependientes: '0', nivelEstudios: '', vehiculoPropio: '',
+    ocupacion: '', empresa: '',
     calle: '', noExterior: '', noInterior: '', codigoPostal: '', colonia: '',
     municipio: '', estado: '', tipoVivienda: '', anosDomicilio: '0',
     celular: '', telefonoFijo: '', correo: '', autorizacion: false,
@@ -55,6 +58,19 @@ export default function CarDetail() {
   const [otpEnviando, setOtpEnviando] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [otpReenvioCountdown, setOtpReenvioCountdown] = useState(0);
+
+  // Id de la solicitud creada en autovia-dashboard apenas se verifica el
+  // OTP; cada "Siguiente" guarda el paso correspondiente en esa misma fila.
+  const [solicitudId, setSolicitudId] = useState(null);
+  const [guardandoPaso, setGuardandoPaso] = useState(false);
+  const [envioCompletado, setEnvioCompletado] = useState(false);
+  const [linkCopiado, setLinkCopiado] = useState(false);
+
+  // ---------- paso 4: verificación de la INE (VerificaMex) ----------
+  const [ineFrente, setIneFrente] = useState(null);
+  const [ineReverso, setIneReverso] = useState(null);
+  const [ineError, setIneError] = useState('');
+  const [ineVerificando, setIneVerificando] = useState(false);
 
   useEffect(() => {
     if (otpReenvioCountdown <= 0) return;
@@ -102,6 +118,26 @@ export default function CarDetail() {
     try {
       const verificado = await verificarOtp(formData.celular, codigo);
       if (!verificado) throw new Error('Código incorrecto o expirado.');
+
+      // Apenas se confirma el WhatsApp, ya hay una solicitud real de este
+      // cliente por este auto — se guarda de una vez, aunque cierre la
+      // pestaña sin llenar el resto del formulario.
+      try {
+        const id = await crearSolicitud({
+          celular: formData.celular,
+          autoSlug: car.slug,
+          autoNombre: car.name,
+          autoPrecio: parsedPrice,
+          enganchePct: down,
+          plazoMeses: plazo,
+          pagoMensual: q.total,
+        });
+        setSolicitudId(id);
+      } catch {
+        // Si falla el guardado en el dashboard no se le corta el trámite al
+        // cliente: se sigue con el formulario y se reintenta en "Siguiente".
+      }
+
       setFormPaso(1);
     } catch (e) {
       setOtpError(e.message || 'Código inválido');
@@ -141,7 +177,38 @@ export default function CarDetail() {
   const garantia = garantiaDe(anio);
 
   const handleInputChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
-  const handleNextStep = () => setFormPaso((prev) => Math.min(prev + 1, 3));
+
+  const guardarPaso = async (paso, datos) => {
+    if (!solicitudId) return;
+    setGuardandoPaso(true);
+    try {
+      await actualizarSolicitud(solicitudId, formData.celular, paso, datos);
+    } catch {
+      // El cliente sigue avanzando aunque el guardado falle; los datos ya
+      // quedaron en formData y el paso 3 vuelve a mandar todo al backend.
+    } finally {
+      setGuardandoPaso(false);
+    }
+  };
+
+  const handleNextStep = async () => {
+    if (formPaso === 1) {
+      await guardarPaso(1, {
+        nombres: formData.nombres, apellidos: formData.apellidos, fechaNacimiento: formData.fechaNacimiento,
+        curp: formData.curp, genero: formData.genero, estadoCivil: formData.estadoCivil,
+        dependientes: formData.dependientes, nivelEstudios: formData.nivelEstudios, vehiculoPropio: formData.vehiculoPropio,
+        ocupacion: formData.ocupacion, empresa: formData.empresa,
+      });
+    } else if (formPaso === 2) {
+      await guardarPaso(2, {
+        calle: formData.calle, noExterior: formData.noExterior, noInterior: formData.noInterior,
+        codigoPostal: formData.codigoPostal, colonia: formData.colonia, municipio: formData.municipio,
+        estadoMx: formData.estado, tipoVivienda: formData.tipoVivienda, anosDomicilio: formData.anosDomicilio,
+      });
+    }
+    setFormPaso((prev) => Math.min(prev + 1, 4));
+  };
+
   const handlePrevStep = () => setFormPaso((prev) => (prev === 1 ? 'codigo' : Math.max(prev - 1, 1)));
 
   const handlePrevImage = (e) => {
@@ -153,25 +220,81 @@ export default function CarDetail() {
     setActiveImageIndex((prev) => (prev === car.images.length - 1 ? 0 : prev + 1));
   };
 
-  const handleSubmitForm = (e) => {
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
     if (!formData.autorizacion) return;
 
-    const message = `*SOLICITUD DE FINANCIAMIENTO*\n` +
-      `Estás solicitando para: *${car.name}*\n` +
-      `• Pago mensual: ${mxn(q.total)}/mes\n` +
-      `• Enganche: ${down}% (${mxn(q.enganche)})\n` +
-      `• Plazo: ${plazo} meses\n\n` +
-      `*Datos Personales:*\n` +
-      `• Nombre: ${formData.nombres} ${formData.apellidos}\n` +
-      `• RFC: ${formData.rfc}\n` +
-      `• Celular: ${formData.celular}\n` +
-      `• Correo: ${formData.correo}\n` +
-      `• Domicilio: ${formData.calle}, Ext: ${formData.noExterior}, CP: ${formData.codigoPostal}, ${formData.colonia}, ${formData.municipio}, ${formData.estado}`;
+    await guardarPaso(3, {
+      telefonoFijo: formData.telefonoFijo, correo: formData.correo, autorizacion: formData.autorizacion,
+    });
+    setFormPaso(4);
+  };
 
-    window.open(`https://wa.me/525554340686?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  const leerComoBase64 = (archivo) => new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(lector.result);
+    lector.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+    lector.readAsDataURL(archivo);
+  });
+
+  const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // El backend responde de inmediato (no espera a VerificaMex) y sigue
+  // verificando en segundo plano. Acá sí se espera un momento — se le
+  // muestra al cliente "Verificando..." y recién cuando el backend
+  // termina (o tras ~50s sin respuesta, para no trabarlo para siempre)
+  // se pasa a la pantalla de confirmación final.
+  const esperarResultadoIne = async () => {
+    for (let intento = 0; intento < 20; intento++) {
+      await esperar(2500);
+      const d = await consultarEstadoIne(solicitudId, formData.celular);
+      if (d.listo) return;
+    }
+  };
+
+  const handleVerificarIne = async () => {
+    if (!ineFrente || !ineReverso || !solicitudId) return;
+    setIneVerificando(true);
+    setIneError('');
+    try {
+      const [frenteBase64, reversoBase64] = await Promise.all([
+        leerComoBase64(ineFrente),
+        leerComoBase64(ineReverso),
+      ]);
+      await verificarIneSolicitud(solicitudId, formData.celular, frenteBase64, reversoBase64);
+      await esperarResultadoIne();
+      setEnvioCompletado(true);
+    } catch (e) {
+      setIneError(e.message || 'No se pudo verificar la INE. Intenta de nuevo.');
+    } finally {
+      setIneVerificando(false);
+    }
+  };
+
+  const linkSeguimiento = solicitudId
+    ? `${window.location.origin}/seguimiento/${solicitudId}?celular=${formData.celular}`
+    : '';
+
+  const copiarLinkSeguimiento = async () => {
+    try {
+      await navigator.clipboard.writeText(linkSeguimiento);
+      setLinkCopiado(true);
+      setTimeout(() => setLinkCopiado(false), 2000);
+    } catch {
+      // Sin permiso de portapapeles: el cliente puede seleccionar el texto
+      // a mano, el input ya queda seleccionado con un click.
+    }
+  };
+
+  const cerrarModalSolicitud = () => {
     setIsModalOpen(false);
     setFormPaso('celular');
+    setEnvioCompletado(false);
+    setSolicitudId(null);
+    setIneFrente(null);
+    setIneReverso(null);
+    setIneError('');
+    setLinkCopiado(false);
   };
 
   const defaultWhatsappUrl = `https://wa.me/525554340686?text=${encodeURIComponent(
@@ -371,7 +494,7 @@ export default function CarDetail() {
 
               <button
                 type="button"
-                onClick={() => { setIsModalOpen(true); setFormPaso('celular'); setOtpError(''); setOtpCodigo(''); }}
+                onClick={() => { setIsModalOpen(true); setFormPaso('celular'); setOtpError(''); setOtpCodigo(''); setSolicitudId(null); setEnvioCompletado(false); }}
                 className={styles.ctaSolid}
               >
                 Solicita tu crédito
@@ -423,24 +546,55 @@ export default function CarDetail() {
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTop}>
                 <span className={styles.modalHeaderLabel}>PRE-APROBACIÓN DE CRÉDITO</span>
-                <button className={styles.closeBtn} onClick={() => setIsModalOpen(false)}>×</button>
+                <button className={styles.closeBtn} onClick={cerrarModalSolicitud}>×</button>
               </div>
-              <h2 className={styles.modalTitle}>Solicitud de financiamiento</h2>
-              <p className={styles.modalSubtitle}>
-                Estás solicitando para: <span className={styles.modalSubtitleBold}>{car.name}</span>{' '}
-                <span className={styles.modalSubtitleAccent}>{mxn(q.total)}/mes estimado</span>
-              </p>
+              {!envioCompletado && (
+                <>
+                  <h2 className={styles.modalTitle}>Solicitud de financiamiento</h2>
+                  <p className={styles.modalSubtitle}>
+                    Estás solicitando para: <span className={styles.modalSubtitleBold}>{car.name}</span>{' '}
+                    <span className={styles.modalSubtitleAccent}>{mxn(q.total)}/mes estimado</span>
+                  </p>
 
-              <div className={styles.progressBar}>
-                <div className={`${styles.progressSegment} ${styles.progressSegmentActive}`}></div>
-                <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 1 ? styles.progressSegmentActive : ''}`}></div>
-                <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 2 ? styles.progressSegmentActive : ''}`}></div>
-                <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 3 ? styles.progressSegmentActive : ''}`}></div>
-              </div>
+                  <div className={styles.progressBar}>
+                    <div className={`${styles.progressSegment} ${styles.progressSegmentActive}`}></div>
+                    <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 1 ? styles.progressSegmentActive : ''}`}></div>
+                    <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 2 ? styles.progressSegmentActive : ''}`}></div>
+                    <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 3 ? styles.progressSegmentActive : ''}`}></div>
+                    <div className={`${styles.progressSegment} ${typeof formPaso === 'number' && formPaso >= 4 ? styles.progressSegmentActive : ''}`}></div>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className={styles.modalBody}>
-              {formPaso === 'celular' && (
+              {envioCompletado && (
+                <div className={styles.stepContainer}>
+                  <h3 className={styles.stepTitle}>¡Listo, recibimos tu solicitud!</h3>
+                  <div className={styles.infoBanner}>
+                    En un lapso de 12 horas se realizará tu preaprobación. Te contactaremos por WhatsApp al{' '}
+                    {formData.celular} para continuar tu trámite de financiamiento para el {car.name}.
+                  </div>
+
+                  <div className={styles.formField}>
+                    <label>Link para seguir el progreso de tu solicitud</label>
+                    <div className={styles.linkBox}>
+                      <input type="text" readOnly value={linkSeguimiento} onClick={(e) => e.target.select()} />
+                      <button type="button" onClick={copiarLinkSeguimiento} className={styles.linkCopyBtn}>
+                        {linkCopiado ? 'Copiado' : 'Copiar'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className={styles.modalFooterSingle}>
+                    <button type="button" className={styles.modalSubmitBtn} onClick={cerrarModalSolicitud}>
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {!envioCompletado && formPaso === 'celular' && (
                 <div className={styles.stepContainer}>
                   <h3 className={styles.stepTitle}>Verifica tu número de celular</h3>
                   <div className={styles.formField}>
@@ -522,8 +676,12 @@ export default function CarDetail() {
                         <input type="date" required value={formData.fechaNacimiento} onChange={(e) => handleInputChange('fechaNacimiento', e.target.value)} />
                       </div>
                       <div className={styles.formField}>
-                        <label>RFC *</label>
-                        <input type="text" required placeholder="XXXXXXXXXXXXX" value={formData.rfc} onChange={(e) => handleInputChange('rfc', e.target.value)} />
+                        <label>CURP *</label>
+                        <input
+                          type="text" required placeholder="XXXXXXXXXXXXXXXXXX" maxLength={18}
+                          value={formData.curp}
+                          onChange={(e) => handleInputChange('curp', e.target.value.toUpperCase().slice(0, 18))}
+                        />
                       </div>
                     </div>
 
@@ -573,12 +731,23 @@ export default function CarDetail() {
                       </div>
                     </div>
 
+                    <div className={styles.formRow}>
+                      <div className={styles.formField}>
+                        <label>Ocupación o actividad económica *</label>
+                        <input type="text" required value={formData.ocupacion} onChange={(e) => handleInputChange('ocupacion', e.target.value)} />
+                      </div>
+                      <div className={styles.formField}>
+                        <label>Empresa o negocio donde labora *</label>
+                        <input type="text" required value={formData.empresa} onChange={(e) => handleInputChange('empresa', e.target.value)} />
+                      </div>
+                    </div>
+
                     <div className={styles.modalFooterSingle}>
                       <button
                         type="button" onClick={handleNextStep} className={styles.modalSubmitBtn}
-                        disabled={!formData.nombres || !formData.apellidos || !formData.fechaNacimiento || !formData.rfc || !formData.genero || !formData.estadoCivil || !formData.nivelEstudios || !formData.vehiculoPropio}
+                        disabled={!formData.nombres || !formData.apellidos || !formData.fechaNacimiento || !formData.curp || !formData.genero || !formData.estadoCivil || !formData.nivelEstudios || !formData.vehiculoPropio || !formData.ocupacion || !formData.empresa || guardandoPaso}
                       >
-                        Siguiente
+                        {guardandoPaso ? 'Guardando...' : 'Siguiente'}
                       </button>
                     </div>
                   </div>
@@ -646,17 +815,17 @@ export default function CarDetail() {
                       <button type="button" onClick={handlePrevStep} className={styles.modalBackBtn}>Atrás</button>
                       <button
                         type="button" onClick={handleNextStep} className={styles.modalSubmitBtn}
-                        disabled={!formData.calle || !formData.noExterior || !formData.codigoPostal || !formData.colonia || !formData.municipio || !formData.estado || !formData.tipoVivienda}
+                        disabled={!formData.calle || !formData.noExterior || !formData.codigoPostal || !formData.colonia || !formData.municipio || !formData.estado || !formData.tipoVivienda || guardandoPaso}
                       >
-                        Siguiente
+                        {guardandoPaso ? 'Guardando...' : 'Siguiente'}
                       </button>
                     </div>
                   </div>
                 )}
 
-                {formPaso === 3 && (
+                {formPaso === 3 && !envioCompletado && (
                   <div className={styles.stepContainer}>
-                    <h3 className={styles.stepTitle}>Paso 3 de 3 - Contacto</h3>
+                    <h3 className={styles.stepTitle}>Paso 3 de 4 - Contacto</h3>
 
                     <div className={styles.infoBanner}>Te contactaremos por WhatsApp al {formData.celular} para continuar tu trámite.</div>
 
@@ -674,20 +843,59 @@ export default function CarDetail() {
                       <input type="checkbox" id="autorizacionCheckbox" checked={formData.autorizacion} onChange={(e) => handleInputChange('autorizacion', e.target.checked)} required />
                       <label htmlFor="autorizacionCheckbox">
                         Autorizo a Grupo Autovía Distribuidora Automotriz SAPI de CV a tratar mis datos personales conforme a
-                        su <a href="#privacy" onClick={(e) => e.preventDefault()}>Aviso de Privacidad</a> para dar seguimiento a
+                        su <a href="/aviso-privacidad" target="_blank" rel="noreferrer">Aviso de Privacidad</a> para dar seguimiento a
                         mi solicitud de financiamiento.
                       </label>
                     </div>
 
                     <div className={styles.modalFooterSplit}>
                       <button type="button" onClick={handlePrevStep} className={styles.modalBackBtn}>Atrás</button>
-                      <button type="submit" className={styles.modalSubmitBtn} disabled={!formData.celular || !formData.correo || !formData.autorizacion}>
-                        Enviar solicitud
+                      <button
+                        type="submit" className={styles.modalSubmitBtn}
+                        disabled={!formData.celular || !formData.correo || !formData.autorizacion || guardandoPaso}
+                      >
+                        {guardandoPaso ? 'Guardando...' : 'Siguiente'}
                       </button>
                     </div>
                   </div>
                 )}
               </form>
+
+              {formPaso === 4 && !envioCompletado && (
+                <div className={styles.stepContainer}>
+                  <h3 className={styles.stepTitle}>Paso 4 de 4 - Verifica tu identidad</h3>
+                  <div className={styles.infoBanner}>
+                    Sube o toma una foto del frente y del reverso de tu INE para confirmar tu identidad. Es el último paso.
+                  </div>
+
+                  <CapturaIne
+                    label="Frente de tu INE *"
+                    archivo={ineFrente}
+                    onCambio={(archivo) => { setIneFrente(archivo); setIneError(''); }}
+                  />
+                  <CapturaIne
+                    label="Reverso de tu INE *"
+                    archivo={ineReverso}
+                    onCambio={(archivo) => { setIneReverso(archivo); setIneError(''); }}
+                  />
+
+                  {ineError && <div className={styles.errorMsg}>{ineError}</div>}
+                  {ineVerificando && (
+                    <div className={styles.infoBanner}>Verificando tu identidad, esto toma solo unos segundos…</div>
+                  )}
+                  <div className={styles.modalFooterSplit}>
+                    <button type="button" onClick={handlePrevStep} className={styles.modalBackBtn} disabled={ineVerificando}>
+                      Atrás
+                    </button>
+                    <button
+                      type="button" onClick={handleVerificarIne} className={styles.modalSubmitBtn}
+                      disabled={!ineFrente || !ineReverso || ineVerificando}
+                    >
+                      {ineVerificando ? 'Verificando...' : 'Enviar solicitud'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

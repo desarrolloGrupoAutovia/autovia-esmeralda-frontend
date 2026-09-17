@@ -52,9 +52,9 @@ export default function Footer() {
           <div>
             <div className={styles.colLabel}>Legal</div>
             <div className={styles.colLinks}>
-              <a href="#aviso-privacidad" onClick={(e) => irAAnchor(e, 'aviso-privacidad')}>Aviso de privacidad</a>
-              <a href="#contacto" onClick={(e) => irAAnchor(e, 'contacto')}>Términos y condiciones</a>
-              <a href="#contacto" onClick={(e) => irAAnchor(e, 'contacto')}>Condiciones de garantía</a>
+              <Link to="/aviso-privacidad">Aviso de privacidad</Link>
+              <Link to="/terminos-y-condiciones">Términos y condiciones</Link>
+              <Link to="/garantia">Condiciones de garantía</Link>
             </div>
             <div className={`${styles.colLabel} ${styles.colLabelSpaced}`}>Redes</div>
             <div className={styles.socialRow}>
