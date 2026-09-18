@@ -58,8 +58,9 @@ export default function Footer() {
             </div>
             <div className={`${styles.colLabel} ${styles.colLabelSpaced}`}>Redes</div>
             <div className={styles.socialRow}>
-              <a href="https://instagram.com/grupoautovia" target="_blank" rel="noopener noreferrer">Instagram</a>
-              <a href="https://facebook.com/grupoautovia" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href="https://www.instagram.com/autovia.esmeralda/" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://www.facebook.com/profile.php?id=61578894307559" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href="https://www.tiktok.com/@autovia.esmeralda" target="_blank" rel="noopener noreferrer">TikTok</a>
               <a href="https://wa.me/525554340686" target="_blank" rel="noopener noreferrer">WhatsApp</a>
             </div>
           </div>
