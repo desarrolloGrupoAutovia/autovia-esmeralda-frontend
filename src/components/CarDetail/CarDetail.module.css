@@ -912,6 +912,25 @@
   to { transform: rotate(360deg); }
 }
 
+.linkBtn {
+  display: block;
+  margin: 14px auto 0;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.linkBtn:disabled {
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
 .modalBackBtn {
   border: 1px solid var(--border-neutral);
   color: var(--text-secondary);
