@@ -57,21 +57,40 @@
   font-size: 14px;
 }
 
-.colLinks a,
-.socialRow a {
+.colLinks a {
   color: var(--text-on-dark-body);
 }
 
-.colLinks a:hover,
-.socialRow a:hover {
+.colLinks a:hover {
   color: var(--accent-bright);
 }
 
 .socialRow {
   margin-top: 14px;
   display: flex;
-  gap: 14px;
-  font-size: 14px;
+  gap: 10px;
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border-dark);
+  color: var(--text-on-dark-body);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.socialIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.socialIcon:hover {
+  border-color: var(--accent);
+  color: var(--accent-bright);
 }
 
 .marcasRow {
