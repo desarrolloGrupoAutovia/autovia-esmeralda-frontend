@@ -891,6 +891,27 @@
   cursor: not-allowed;
 }
 
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+.modalSubmitBtn:disabled .spinner {
+  border-color: rgba(0, 0, 0, 0.15);
+  border-top-color: var(--text-muted);
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
 .modalBackBtn {
   border: 1px solid var(--border-neutral);
   color: var(--text-secondary);

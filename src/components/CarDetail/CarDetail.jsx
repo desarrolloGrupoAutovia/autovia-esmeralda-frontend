@@ -6,13 +6,11 @@ import { getCarImageUrl, parsePrice, parseAnio, parseKm } from '../../lib/cars';
 import { mxn, ENGANCHE_MINIMO_PCT } from '../../lib/credito';
 import { useCotizador } from '../../lib/useCotizador';
 import { useCatalogo } from '../../lib/catalogo';
-import { enviarOtp, verificarOtp } from '../../lib/otp';
 import { crearSolicitud, actualizarSolicitud, verificarIneSolicitud, consultarEstadoIne, reanudarSolicitud } from '../../lib/solicitudes';
 import { useArrastreHorizontal } from '../../lib/useArrastreHorizontal';
 import CapturaIne from './CapturaIne';
 
 const PLAZOS = [12, 24, 36, 48];
-const REENVIO_COOLDOWN_S = 32;
 
 const PUNTOS_REVISION = [
   { name: 'Motor', status: 'OK' },
@@ -54,11 +52,10 @@ export default function CarDetail() {
     celular: '', telefonoFijo: '', correo: '', autorizacion: false,
   });
 
-  // ---------- verificación por WhatsApp (paso "celular" → "codigo") ----------
-  const [otpCodigo, setOtpCodigo] = useState('');
+  // ---------- paso "celular": celular + consentimiento (sin OTP por ahora) ----------
   const [otpEnviando, setOtpEnviando] = useState(false);
   const [otpError, setOtpError] = useState('');
-  const [otpReenvioCountdown, setOtpReenvioCountdown] = useState(0);
+  const [aceptaContacto, setAceptaContacto] = useState(false);
 
   // Id de la solicitud creada en autovia-dashboard apenas se verifica el
   // OTP; cada "Siguiente" guarda el paso correspondiente en esa misma fila.
@@ -71,12 +68,6 @@ export default function CarDetail() {
   const [ineReverso, setIneReverso] = useState(null);
   const [ineError, setIneError] = useState('');
   const [ineVerificando, setIneVerificando] = useState(false);
-
-  useEffect(() => {
-    if (otpReenvioCountdown <= 0) return;
-    const t = setTimeout(() => setOtpReenvioCountdown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [otpReenvioCountdown]);
 
   const parsedPrice = car ? parsePrice(car.price) : 0;
   const { setPrice, down, setDown, plazo, setPlazo, q } = useCotizador({
@@ -140,63 +131,35 @@ export default function CarDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [car]);
 
-  const handleEnviarOtp = async () => {
-    if (formData.celular.length < 10) return;
+  /* SIN verificación por OTP (2026-09-18, temporal): mientras Meta no
+     apruebe el nombre para mostrar del número de WhatsApp, no hay forma
+     de mandarle un código real a nadie que no sea el celular de prueba
+     del equipo — así que este paso solo pide el celular y un check de
+     consentimiento para ser contactado ahí. Cuando el número quede
+     aprobado, este paso vuelve a pedir y verificar el código (ver
+     lib/otp.js, que queda intacto sin usarse por ahora). */
+  const handleAceptarContacto = async () => {
+    if (formData.celular.length < 10 || !aceptaContacto) return;
     setOtpEnviando(true);
     setOtpError('');
     try {
-      await enviarOtp(formData.celular);
-      setOtpCodigo('');
-      setOtpReenvioCountdown(REENVIO_COOLDOWN_S);
-    } catch (e) {
-      setOtpError(e.message || 'Ocurrió un error al enviar el código.');
-    } finally {
-      setOtpEnviando(false);
-    }
-  };
-
-  const handleVerificarOtp = async (codigo) => {
-    setOtpEnviando(true);
-    setOtpError('');
-    try {
-      const verificado = await verificarOtp(formData.celular, codigo);
-      if (!verificado) throw new Error('Código incorrecto o expirado.');
-
-      // Apenas se confirma el WhatsApp, ya hay una solicitud real de este
-      // cliente por este auto — se guarda de una vez, aunque cierre la
-      // pestaña sin llenar el resto del formulario.
-      try {
-        const id = await crearSolicitud({
-          celular: formData.celular,
-          autoSlug: car.slug,
-          autoNombre: car.name,
-          autoPrecio: parsedPrice,
-          enganchePct: down,
-          plazoMeses: plazo,
-          pagoMensual: q.total,
-        });
-        setSolicitudId(id);
-      } catch {
-        // Si falla el guardado en el dashboard no se le corta el trámite al
-        // cliente: se sigue con el formulario y se reintenta en "Siguiente".
-      }
-
+      const id = await crearSolicitud({
+        celular: formData.celular,
+        autoSlug: car.slug,
+        autoNombre: car.name,
+        autoPrecio: parsedPrice,
+        enganchePct: down,
+        plazoMeses: plazo,
+        pagoMensual: q.total,
+      });
+      setSolicitudId(id);
       setFormPaso(1);
     } catch (e) {
-      setOtpError(e.message || 'Código inválido');
-      setOtpReenvioCountdown(0);
+      setOtpError(e.message || 'No se pudo guardar tu solicitud. Intenta de nuevo.');
     } finally {
       setOtpEnviando(false);
     }
   };
-
-  // El código se verifica solo apenas se completan los 6 dígitos.
-  useEffect(() => {
-    if (formPaso === 'codigo' && otpCodigo.length === 6 && !otpEnviando) {
-      handleVerificarOtp(otpCodigo);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otpCodigo]);
 
   if (!car) {
     return (
@@ -252,7 +215,7 @@ export default function CarDetail() {
     setFormPaso((prev) => Math.min(prev + 1, 4));
   };
 
-  const handlePrevStep = () => setFormPaso((prev) => (prev === 1 ? 'codigo' : Math.max(prev - 1, 1)));
+  const handlePrevStep = () => setFormPaso((prev) => (prev === 1 ? 'celular' : Math.max(prev - 1, 1)));
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
@@ -322,6 +285,7 @@ export default function CarDetail() {
     setIneFrente(null);
     setIneReverso(null);
     setIneError('');
+    setAceptaContacto(false);
   };
 
   const defaultWhatsappUrl = `https://wa.me/525554340686?text=${encodeURIComponent(
@@ -512,7 +476,7 @@ export default function CarDetail() {
 
               <button
                 type="button"
-                onClick={() => { setIsModalOpen(true); setFormPaso('celular'); setOtpError(''); setOtpCodigo(''); setSolicitudId(null); setEnvioCompletado(false); }}
+                onClick={() => { setIsModalOpen(true); setFormPaso('celular'); setOtpError(''); setAceptaContacto(false); setSolicitudId(null); setEnvioCompletado(false); }}
                 className={styles.ctaSolid}
               >
                 Solicita tu crédito
@@ -604,7 +568,7 @@ export default function CarDetail() {
 
               {!envioCompletado && formPaso === 'celular' && (
                 <div className={styles.stepContainer}>
-                  <h3 className={styles.stepTitle}>Verifica tu número de celular</h3>
+                  <h3 className={styles.stepTitle}>Déjanos tu número de celular</h3>
                   <div className={styles.formField}>
                     <label>Número de celular (WhatsApp) *</label>
                     <input
@@ -616,47 +580,25 @@ export default function CarDetail() {
                     />
                     <div className={styles.infoBanner}>Con este número te contactaremos por WhatsApp para dar seguimiento a tu solicitud.</div>
                   </div>
+                  <div className={styles.checkboxField}>
+                    <input
+                      type="checkbox" id="aceptaContactoCheckbox"
+                      checked={aceptaContacto}
+                      onChange={(e) => setAceptaContacto(e.target.checked)}
+                    />
+                    <label htmlFor="aceptaContactoCheckbox">
+                      Autorizo a Grupo Autovía a contactarme por WhatsApp a este número para dar seguimiento a mi solicitud.
+                    </label>
+                  </div>
                   {otpError && <div className={styles.errorMsg}>{otpError}</div>}
                   <div className={styles.modalFooterSingle}>
                     <button
                       type="button"
                       className={styles.modalSubmitBtn}
-                      disabled={formData.celular.length < 10 || otpEnviando}
-                      onClick={async () => { await handleEnviarOtp(); setFormPaso('codigo'); }}
+                      disabled={formData.celular.length < 10 || !aceptaContacto || otpEnviando}
+                      onClick={handleAceptarContacto}
                     >
-                      {otpEnviando ? 'Enviando...' : 'Enviar código'}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {formPaso === 'codigo' && (
-                <div className={styles.stepContainer}>
-                  <h3 className={styles.stepTitle}>Verifica tu número de celular</h3>
-                  <div className={styles.infoBanner}>Te enviamos un código por WhatsApp al {formData.celular}.</div>
-                  <div className={styles.formField}>
-                    <label>Ingresa el código de 6 dígitos</label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="• • • • • •"
-                      maxLength={6}
-                      value={otpCodigo}
-                      onChange={(e) => { setOtpCodigo(e.target.value.replace(/\D/g, '')); setOtpError(''); }}
-                    />
-                  </div>
-                  {otpError && <div className={styles.errorMsg}>{otpError}</div>}
-                  <div className={styles.modalFooterSplit}>
-                    <button type="button" className={styles.modalBackBtn} onClick={() => setFormPaso('celular')}>
-                      Atrás
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.modalSubmitBtn}
-                      onClick={handleEnviarOtp}
-                      disabled={otpEnviando || (otpReenvioCountdown > 0 && !otpError)}
-                    >
-                      {otpEnviando ? 'Enviando...' : otpReenvioCountdown > 0 && !otpError ? `Reenviar código (${otpReenvioCountdown})` : 'Reenviar código'}
+                      {otpEnviando ? 'Guardando...' : 'Continuar'}
                     </button>
                   </div>
                 </div>
@@ -889,7 +831,9 @@ export default function CarDetail() {
 
                   {ineError && <div className={styles.errorMsg}>{ineError}</div>}
                   {ineVerificando && (
-                    <div className={styles.infoBanner}>Verificando tu identidad, esto toma solo unos segundos…</div>
+                    <div className={styles.infoBanner}>
+                      Estamos verificando tu identidad. Esto puede tardar hasta un minuto — no cierres esta ventana.
+                    </div>
                   )}
                   <div className={styles.modalFooterSplit}>
                     <button type="button" onClick={handlePrevStep} className={styles.modalBackBtn} disabled={ineVerificando}>
@@ -899,7 +843,7 @@ export default function CarDetail() {
                       type="button" onClick={handleVerificarIne} className={styles.modalSubmitBtn}
                       disabled={!ineFrente || !ineReverso || ineVerificando}
                     >
-                      {ineVerificando ? 'Verificando...' : 'Enviar solicitud'}
+                      {ineVerificando ? (<><span className={styles.spinner}></span> Verificando...</>) : 'Enviar solicitud'}
                     </button>
                   </div>
                 </div>
