@@ -267,11 +267,34 @@ export default function CarDetail() {
     setFormPaso(4);
   };
 
-  const leerComoBase64 = (archivo) => new Promise((resolve, reject) => {
-    const lector = new FileReader();
-    lector.onload = () => resolve(lector.result);
-    lector.onerror = () => reject(new Error('No se pudo leer la imagen.'));
-    lector.readAsDataURL(archivo);
+  /* Las fotos de cámara de un celular moderno pueden pesar varios MB —
+     en base64 crecen ~33% más, y en redes móviles eso causa timeouts o
+     "Load failed" (el error genérico que da Safari/iOS cuando fetch()
+     falla, confirmado 2026-09-19 con un cliente real en 4G). Se
+     redimensiona a un ancho máximo razonable para OCR y se recomprime
+     como JPEG antes de mandar, sin tocar el archivo original que el
+     cliente ve en la UI. */
+  const ANCHO_MAXIMO_INE = 1600;
+  const CALIDAD_JPEG_INE = 0.82;
+
+  const comprimirImagen = (archivo) => new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(archivo);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const escala = Math.min(1, ANCHO_MAXIMO_INE / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * escala);
+      canvas.height = Math.round(img.height * escala);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', CALIDAD_JPEG_INE));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('No se pudo procesar la imagen.'));
+    };
+    img.src = url;
   });
 
   const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -295,14 +318,17 @@ export default function CarDetail() {
     setIneError('');
     try {
       const [frenteBase64, reversoBase64] = await Promise.all([
-        leerComoBase64(ineFrente),
-        leerComoBase64(ineReverso),
+        comprimirImagen(ineFrente),
+        comprimirImagen(ineReverso),
       ]);
       await verificarIneSolicitud(solicitudId, formData.celular, frenteBase64, reversoBase64);
       await esperarResultadoIne();
       setEnvioCompletado(true);
     } catch (e) {
-      setIneError(e.message || 'No se pudo verificar la INE. Intenta de nuevo.');
+      const mensaje = e.message === 'Load failed' || e.message === 'Failed to fetch'
+        ? 'No se pudo conectar con el servidor. Revisa tu conexión e intenta de nuevo.'
+        : e.message || 'No se pudo verificar la INE. Intenta de nuevo.';
+      setIneError(mensaje);
     } finally {
       setIneVerificando(false);
     }
