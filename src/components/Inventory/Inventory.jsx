@@ -12,10 +12,19 @@ const ORDEN_OPTIONS = [
   { value: 'alto-bajo', label: 'Precio: Alto a Bajo' },
 ];
 
-const PRECIO_MIN = 200000;
-const PRECIO_MAX = 700000;
-export const MENSUALIDAD_MIN = 6000;
-export const MENSUALIDAD_MAX = 16000;
+/* Los topes de los sliders salen del inventario real, no de constantes
+   fijas: estaban clavados en $700.000 y $16.000/mes, y cuando entraron
+   unidades más caras (un Corvette de $1.999.900, un i8 de $1.799.900, una
+   Sprinter de $17.300/mes) el propio filtro las escondía del catálogo
+   aunque estuvieran publicadas y disponibles. */
+const PASO_PRECIO = 10000;
+const PASO_MENSUALIDAD = 500;
+
+/* Se redondea hacia arriba al paso del slider para que el auto más caro
+   quede dentro del rango y no justo por afuera del tope. */
+const redondearArriba = (n, paso) => Math.ceil(n / paso) * paso;
+const redondearAbajo = (n, paso) => Math.floor(n / paso) * paso;
+
 const TODAS_MARCAS = 'Todas las marcas';
 
 /* Los filtros viven en la URL (?carroceria=&marca=&maxPrecio=&maxMensualidad=&orden=)
@@ -27,11 +36,24 @@ const CARROCERIA_LABEL = { [TODAS_CARROCERIAS]: 'Todos' };
 
 export default function Inventory() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { autos, cargando, error } = useCatalogo();
+
+  const { precioMin, precioMax, mensualidadMin, mensualidadMax } = useMemo(() => {
+    const precios = autos.map((c) => parsePrice(c.price)).filter((p) => p > 0);
+    if (!precios.length) return { precioMin: 0, precioMax: 0, mensualidadMin: 0, mensualidadMax: 0 };
+    const mensualidades = precios.map(mensualidadEstimada);
+    return {
+      precioMin: redondearAbajo(Math.min(...precios), PASO_PRECIO),
+      precioMax: redondearArriba(Math.max(...precios), PASO_PRECIO),
+      mensualidadMin: redondearAbajo(Math.min(...mensualidades), PASO_MENSUALIDAD),
+      mensualidadMax: redondearArriba(Math.max(...mensualidades), PASO_MENSUALIDAD),
+    };
+  }, [autos]);
 
   const carroceria = searchParams.get('carroceria') || TODAS_CARROCERIAS;
   const marca = searchParams.get('marca') || TODAS_MARCAS;
-  const maxPrecio = Number(searchParams.get('maxPrecio')) || PRECIO_MAX;
-  const maxMensualidad = Number(searchParams.get('maxMensualidad')) || MENSUALIDAD_MAX;
+  const maxPrecio = Number(searchParams.get('maxPrecio')) || precioMax;
+  const maxMensualidad = Number(searchParams.get('maxMensualidad')) || mensualidadMax;
   const orden = searchParams.get('orden') || 'relevancia';
 
   const actualizarFiltro = (clave, valor, valorPorDefecto) => {
@@ -40,8 +62,6 @@ export default function Inventory() {
     else next.set(clave, valor);
     setSearchParams(next, { replace: false });
   };
-
-  const { autos, cargando, error } = useCatalogo();
 
   const marcaOptions = useMemo(
     () => [TODAS_MARCAS, ...marcasConConteo(autos).map((m) => m.marca)],
@@ -71,8 +91,8 @@ export default function Inventory() {
   const filtrosActivos = [];
   if (carroceria !== TODAS_CARROCERIAS) filtrosActivos.push(carroceria);
   if (marca !== TODAS_MARCAS) filtrosActivos.push(tituloMarca(marca));
-  if (maxPrecio < PRECIO_MAX) filtrosActivos.push(`Hasta ${mxn(maxPrecio)}`);
-  if (maxMensualidad < MENSUALIDAD_MAX) filtrosActivos.push(`Hasta ${mxn(maxMensualidad)}/mes`);
+  if (maxPrecio < precioMax) filtrosActivos.push(`Hasta ${mxn(maxPrecio)}`);
+  if (maxMensualidad < mensualidadMax) filtrosActivos.push(`Hasta ${mxn(maxMensualidad)}/mes`);
 
   const limpiarFiltros = () => setSearchParams({});
 
@@ -159,9 +179,9 @@ export default function Inventory() {
               <span className={styles.sliderValue}>{mxn(maxPrecio)}</span>
             </div>
             <input
-              type="range" min={PRECIO_MIN} max={PRECIO_MAX} step={10000}
+              type="range" min={precioMin} max={precioMax} step={PASO_PRECIO}
               value={maxPrecio}
-              onChange={(e) => actualizarFiltro('maxPrecio', e.target.value, String(PRECIO_MAX))}
+              onChange={(e) => actualizarFiltro('maxPrecio', e.target.value, String(precioMax))}
               className={styles.slider}
             />
           </div>
@@ -172,9 +192,9 @@ export default function Inventory() {
               <span className={styles.sliderValue}>{mxn(maxMensualidad)}</span>
             </div>
             <input
-              type="range" min={MENSUALIDAD_MIN} max={MENSUALIDAD_MAX} step={500}
+              type="range" min={mensualidadMin} max={mensualidadMax} step={PASO_MENSUALIDAD}
               value={maxMensualidad}
-              onChange={(e) => actualizarFiltro('maxMensualidad', e.target.value, String(MENSUALIDAD_MAX))}
+              onChange={(e) => actualizarFiltro('maxMensualidad', e.target.value, String(mensualidadMax))}
               className={styles.slider}
             />
           </div>
