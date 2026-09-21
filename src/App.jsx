@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Inventory from './components/Inventory/Inventory';
@@ -26,6 +27,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <Analytics />
     </>
   );
 }
