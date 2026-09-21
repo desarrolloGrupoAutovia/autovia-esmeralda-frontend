@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './CarCard.module.css';
-import { getCarCoverUrl, parsePrice, parseAnio, parseKm, tituloCorto } from '../../lib/cars';
+import { getCarCoverUrl, getCarCoverSrcSet, parsePrice, parseAnio, parseKm, tituloCorto } from '../../lib/cars';
 import { mxn, mensualidadEstimada } from '../../lib/credito';
 
 /* Tarjeta de auto reutilizada en Home (destacados), Inventario y "unidades
@@ -12,12 +12,25 @@ export default function CarCard({ car }) {
   const anio = parseAnio(car.name);
   const km = parseKm(car.km);
   const mensualidad = mensualidadEstimada(price);
+  /* La card mide ~276px en la grilla de escritorio, pero en móvil la
+     grilla pasa a una sola columna y ocupa casi todo el ancho de la
+     pantalla — por eso srcset, para que cada dispositivo baje el tamaño
+     que le corresponde en vez del más grande de los dos. */
+  const portada = getCarCoverUrl(car, 300);
+  const portadaSrcSet = getCarCoverSrcSet(car, [420, 640, 828, 1080]);
 
   return (
     <Link to={`/inventario/${car.slug}`} className={styles.card}>
       <div className={styles.imgWrap}>
-        {getCarCoverUrl(car) ? (
-          <img src={getCarCoverUrl(car)} alt={car.name} className={styles.img} />
+        {portada ? (
+          <img
+            src={portada}
+            srcSet={portadaSrcSet}
+            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 300px"
+            alt={car.name}
+            className={styles.img}
+            loading="lazy"
+          />
         ) : (
           <div className={styles.imgPlaceholder}></div>
         )}

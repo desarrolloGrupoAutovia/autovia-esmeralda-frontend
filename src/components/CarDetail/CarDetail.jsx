@@ -349,7 +349,11 @@ export default function CarDetail() {
     `Hola, estoy interesado en el vehículo ${car.name} (${car.price}) que vi en su sitio web de Autovía Esmeralda.`
   )}`;
 
-  const currentCarImage = car.images?.length ? getCarImageUrl(car.images[activeImageIndex]) : '';
+  /* 540 (→ w=1080) y no 828 (→ w=1920): a 1920 el WebP pesa lo mismo que
+     el JPEG original porque las fotos de origen no tienen mucha más
+     resolución útil, así que no se gana nada. Para ver el detalle fino
+     está el lightbox, que sí abre la original. */
+  const currentCarImage = car.images?.length ? getCarImageUrl(car.images[activeImageIndex], 540) : '';
 
   const similares = autos
     .filter((c) => c.slug !== car.slug && c.category === car.category)
@@ -404,7 +408,7 @@ export default function CarDetail() {
             {car.images.length > 1 && (
               <div className={styles.thumbnails} ref={thumbsArrastre.ref} {...thumbsArrastre.handlers}>
                 {car.images.map((imagePath, index) => {
-                  const thumbUrl = getCarImageUrl(imagePath);
+                  const thumbUrl = getCarImageUrl(imagePath, 132);
                   return (
                     <button
                       key={index}
